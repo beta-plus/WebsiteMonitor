@@ -14,7 +14,7 @@ public class SimpleDataSource
     private static String password;
     
     /**
-     * @param fileName
+     * @param fileNam
      * @throws IOException
      * @throws ClassNotFoundException 
      */
