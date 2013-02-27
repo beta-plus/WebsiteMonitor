@@ -48,7 +48,7 @@ public class TestDB
     }
 }
 
-/*  DatabaseMetaData dbm = conn.getMetaData();
+/*1  DatabaseMetaData dbm = conn.getMetaData();
     ResultSet rs = dbm.getTables(null, null,"Test", args);
     if (rs.next()) {
         System.out.println("Table exists!");
