@@ -13,6 +13,6 @@
     </head>
     <body>
         <h1>Hello World!</h1>
-        <h2>Yayy! The Beta+ index page is awesome :)! Now lets get working :P!</h2>
+        <h2>Yayy! The Beta+ index page :)! Now lets get working :P!</h2>
     </body>
 </html>
