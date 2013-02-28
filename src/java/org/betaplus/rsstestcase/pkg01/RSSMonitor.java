@@ -22,7 +22,7 @@ public class RSSMonitor
         
         SimpleDataSource.init("/Users/Jay/Documents/Documents/University Work/Year 02/Year 02 - Semester 02/NetBeans Projects/Software Hut/RSS Monitor/src/pkg01/database.properties");
         
-        //Get and make the connection
+        // Get and make the connection
         Connection conn = SimpleDataSource.getConnection();
         
         Statement stat = conn.createStatement();
