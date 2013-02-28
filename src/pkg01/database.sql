@@ -1,1 +1,0 @@
-CREATE TABLE IF NOT EXISTS RSS (rssid int(11),title VARCHAR(60),linktitle VARCHAR(120),linkpubdate VARCHAR(120),linklink VARCHAR(8000),PRIMARY KEY (rssid))
