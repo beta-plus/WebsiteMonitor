@@ -13,7 +13,7 @@ public class DatabaseGenerator
         
         System.out.println("Attempting to initialise data source...");
         
-        SimpleDataSource.init("/Users/StephenJohnRussell/NetBeansProjects/WebsiteMonitor/src/java/org/betaplus/rsstestcase/pkg01/database.properties");
+        SimpleDataSource.init("data/database.properties");
         
         System.out.println("Source initialised!");
         
@@ -28,7 +28,7 @@ public class DatabaseGenerator
         {
             Statement stat = conn.createStatement();
 
-            BufferedReader in = new BufferedReader(new FileReader("/Users/StephenJohnRussell/NetBeansProjects/WebsiteMonitor/src/java/org/betaplus/rsstestcase/pkg01/database.sql"));
+            BufferedReader in = new BufferedReader(new FileReader("data/database.sql"));
             String str;
             StringBuffer sb = new StringBuffer();
             System.out.println("Read!\n");
