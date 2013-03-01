@@ -1,5 +1,7 @@
 package org.betaplus.rsstestcase.pkg01;
 
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
@@ -19,8 +21,10 @@ public class RSSMonitor
         
         System.out.println("Title = " + feed.getTitle());
         System.out.println("Description = " + feed.getDescription() + "\n");
+        int rssID = 0;
         
-        SimpleDataSource.init("/Users/Jay/Documents/Documents/University Work/Year 02/Year 02 - Semester 02/NetBeans Projects/Software Hut/RSS Monitor/src/pkg01/database.properties");
+        SimpleDataSource.init("data/database.properties");
+                               
         
         // Get and make the connection
         Connection conn = SimpleDataSource.getConnection();
@@ -35,8 +39,12 @@ public class RSSMonitor
             System.out.println(entry.getLink() + "\n");
             
             String title = entry.getTitle().replace("'", "");
-            
-            stat.execute("INSERT INTO RSS (title,linktitle,linkpubdate,linklink) VALUES('" + feed.getTitle() + "','" + title + "','" + entry.getPublishedDate() + "','" + entry.getLink() + "')");
+            try {
+                stat.execute("INSERT INTO RSS (rssid,title,linktitle,linkpubdate,linklink) VALUES('" + rssID++ + "','" + feed.getTitle() + "','" + title + "','" + entry.getPublishedDate() + "','" + entry.getLink() + "')");
+            }
+            catch (MySQLIntegrityConstraintViolationException e) {
+                System.out.println("Already stored!!");
+            }
         }
     }
 }

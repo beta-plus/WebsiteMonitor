@@ -12,7 +12,7 @@ public class TestDB
         
         System.out.println("Attempting to initialise data source...");
         
-        SimpleDataSource.init("/Users/Jay/Documents/Documents/University Work/Year 02/Year 02 - Semester 02/NetBeans Projects/Software Hut/RSS Monitor/src/pkg01/database.properties");
+        SimpleDataSource.init("/Users/StephenJohnRussell/NetBeansProjects/WebsiteMonitor/src/java/org/betaplus/rsstestcase/pkg01/database.properties");
         
         System.out.println("Source initialised!");
         
