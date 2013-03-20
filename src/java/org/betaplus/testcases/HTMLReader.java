@@ -1,4 +1,4 @@
-package org.betaplus.htmltestcase.pkg01;
+package org.betaplus.testcases;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,7 +26,7 @@ public class HTMLReader {
             System.out.println("Success: Request Completed");
             
         } catch (MalformedURLException ex) {
-            System.out.println("Success: Request Failed");
+            System.out.println("Error: Request Failed" + ex);
         }
     }
     
@@ -43,8 +43,12 @@ public class HTMLReader {
             System.out.println("Success: Request Completed");
 
         } catch (IOException ex) {
-            System.out.println("Error: Request Failed");
+            System.out.println("Error: Request Failed" + ex);
         }
+    }
+    
+    public void printText() {
+        System.out.println(doc.body().text());
     }
 
     public void removeMarkup() {
@@ -59,7 +63,7 @@ public class HTMLReader {
             System.out.println("Success: Request Completed");
 
         } catch (IOException ex) {
-            System.out.println("Error: Request Failed");
+            System.out.println("Error: Request Failed" + ex);
         }
     }
 }

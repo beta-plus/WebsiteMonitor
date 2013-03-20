@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package org.betaplus.pdftestcase.pkg01;
+package org.betaplus.testcases;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

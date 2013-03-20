@@ -1,8 +1,8 @@
-package org.betaplus.pdftestcase.pkg01;
+package org.betaplus.testcases;
 
 import java.io.File;
 import java.util.LinkedList;
-import org.betaplus.pdftestcase.pkg02.Comparitor;
+import org.betaplus.testcases.Comparitor;
 
 /**
  *

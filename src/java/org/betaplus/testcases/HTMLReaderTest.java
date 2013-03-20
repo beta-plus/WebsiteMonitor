@@ -1,4 +1,4 @@
-package org.betaplus.htmltestcase.pkg01;
+package org.betaplus.testcases;
 
 public class HTMLReaderTest 
 {
@@ -17,6 +17,9 @@ public class HTMLReaderTest
         
         System.out.println("Removing Markup...");
         reader.removeMarkup();
+        
+        System.out.println("Displaying Text...");
+        reader.printText();
         
         System.out.println("Ending Test...");
     }

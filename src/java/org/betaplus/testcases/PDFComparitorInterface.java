@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.betaplus.pdftestcase.pkg02;
+package org.betaplus.testcases;
 
 import java.io.File;
 import java.util.LinkedList;

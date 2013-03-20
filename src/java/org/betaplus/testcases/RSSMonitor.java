@@ -1,4 +1,4 @@
-package org.betaplus.rsstestcase.pkg01;
+package org.betaplus.testcases;
 
 /*
  * Author: James Finney
@@ -25,7 +25,7 @@ public class RSSMonitor
 {
     public static void main(String[] args) throws Exception
     {
-        URL feedSource = new URL("http://feeds.bbci.co.uk/news/rss.xml");
+        URL feedSource = new URL("http://www.gov.im/gambling/regulatory.xml");
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(feedSource));
         

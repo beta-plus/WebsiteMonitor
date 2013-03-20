@@ -1,4 +1,4 @@
-package org.betaplus.rsstestcase.pkg01;
+package org.betaplus.testcases;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

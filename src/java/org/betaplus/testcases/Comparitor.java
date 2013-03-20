@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.betaplus.pdftestcase.pkg02;
+package org.betaplus.testcases;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,8 +16,7 @@ import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
-import org.betaplus.pdftestcase.pkg01.DiffMatchPatch;
-import org.betaplus.pdftestcase.pkg01.DiffMatchPatch.Diff;
+import org.betaplus.testcases.DiffMatchPatch.Diff;
 
 /**
  * Class implementing PDFComparitorInterface to provide PDF comparison.
