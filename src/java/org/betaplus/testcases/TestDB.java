@@ -1,5 +1,17 @@
 package org.betaplus.testcases;
 
+/*
+ * Author: James Finney
+ * Title: Test Database
+ * Created: 01/02/2012
+ * Version: 1.0
+ */
+
+/**
+ * @author James Finney
+ * @version 1.0
+ */
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -27,15 +39,16 @@ public class TestDB
         {
             Statement stat = conn.createStatement();
             
-            stat.execute("drop table if exists Test");
+            stat.execute("drop table if exists test");
             
             // Create the table
-            stat.execute("CREATE TABLE Test (Name VARCHAR(20))");
-            // Populate the table with a single value
-            stat.execute("INSERT INTO Test VALUES ('Romeo')");
+            stat.execute("CREATE TABLE test (Name VARCHAR(30))");
             
-            // Run the query to get all records from the table
-            ResultSet result = stat.executeQuery("SELECT * FROM Test");
+            // Populate the table with a single value
+            stat.execute("INSERT INTO test VALUES ('Romeo')");
+            
+            // Run the query to get and display all records from the table
+            ResultSet result = stat.executeQuery("SELECT * FROM test");
             result.next();
             System.out.println("\n" + result.getString("Name"));
         }
@@ -48,12 +61,16 @@ public class TestDB
     }
 }
 
-/*1  DatabaseMetaData dbm = conn.getMetaData();
+/*
+ * Another way -
+    DatabaseMetaData dbm = conn.getMetaData();
     ResultSet rs = dbm.getTables(null, null,"Test", args);
-    if (rs.next()) {
+    if (rs.next())
+    {
         System.out.println("Table exists!");
         stat.execute("DROP TABLE Test");
-    } else {
+    } else
+    {
         System.out.println("Table does not exist"); 
     } 
 */
