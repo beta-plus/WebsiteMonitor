@@ -5,10 +5,10 @@
 package PDFComLinInt;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Scanner;
 import org.betaplus.testcases.Comparitor;
+
 
 /**
  * Class providing command line interface for PDF comparisons.
@@ -31,7 +31,6 @@ public class PDFComLinInt extends Comparitor {
                 + "will appear once you type END and press enter\n");
         String input = "";
         while (!input.equals("END")) {
-            input = in.nextLine();
             if (!input.equals("")){
                 File f = new File(input);
                 if (files.add(f)) {
@@ -40,6 +39,7 @@ public class PDFComLinInt extends Comparitor {
                     System.out.println("File not added, please try again.");
                 }
             }
+            input = in.nextLine();
         }
         boolean menuOp = true;
         while(menuOp) {
@@ -47,6 +47,7 @@ public class PDFComLinInt extends Comparitor {
                              + "1.Compare Checksums\n"
                              + "2.Show Differences\n"
                              + "3.Percentage Changed\n"
+                             + "4.Download Files\n"
                              + "0.Close & Exit");
             input = in.nextLine();
             int sel = -1;
@@ -70,6 +71,8 @@ public class PDFComLinInt extends Comparitor {
             showDiff(in, files);
         } else if (sel == 3) {
             showPercentChanged(in, files);
+        } else if (sel == 4) {
+            showDownloadOptions(in, files);
         }
         
     }
@@ -80,7 +83,7 @@ public class PDFComLinInt extends Comparitor {
             if (compareChecksums(files.get(sels[0]), files.get(sels[1]), MD5)) {
                 System.out.println("Files match");
             } else {
-                System.out.println("File do not match");
+                System.out.println("Files do not match");
             }
         }        
     }
@@ -106,7 +109,8 @@ public class PDFComLinInt extends Comparitor {
     private static void showDiff(Scanner in, LinkedList<File> files) {
         int[] sels = showFiles(in, files);
         if (sels[0] != -1 || sels[1]  != -1) {
-            LinkedList<String> diffs = getDifference(files.get(sels[0]), files.get(sels[1]));
+            LinkedList<String> diffs = getDifference(files.get(sels[0]), 
+                    files.get(sels[1]));
             for (String s : diffs) {
                 System.out.println(s);
             }
@@ -116,10 +120,22 @@ public class PDFComLinInt extends Comparitor {
     private static void showPercentChanged(Scanner in, LinkedList<File> files) {
         int[] sels = showFiles(in, files);
         if (sels[0] != -1 || sels[1]  != -1) {
-            double[] percs = percentageChanged(getDifference(files.get(sels[0]), files.get(sels[1])));
+            double[] percs = percentageChanged(getDifference(files.get(sels[0]), 
+                    files.get(sels[1])));
             System.out.println("Removed:\t" + percs[0]);            
             System.out.println("Added:\t" + percs[1]);            
             System.out.println("Equal:\t" + percs[2]);            
+        }
+    }
+
+    private static void showDownloadOptions(Scanner in, LinkedList<File> files) {
+        System.out.println("Please provide a url to look for pdf's.");
+        String input = "";
+        while (!input.equals("END")) {
+            if (!input.equals("")){
+                files.addAll(downloadPDFS(input));
+            }
+            input = in.nextLine();
         }
     }
 }
