@@ -72,6 +72,13 @@ public interface ToolBoxInterface {
     LinkedList<File> getPdfContent(String url);
     
     /**
+     * Returns text from a given RSS feed.
+     * @param url
+     * @return 
+     */
+    LinkedList<File> getRSSContent(String url);
+    
+    /**
      * Returns a double array of three values:
      * 
      *  § percentage removed

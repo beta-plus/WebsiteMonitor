@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import org.betaplus.testcases.Comparitor;
 
-
 /**
  * Class providing command line interface for PDF comparisons.
  *
@@ -25,43 +24,42 @@ public class PDFComLinInt extends Comparitor {
     }
 
     private static void menu(Scanner in, LinkedList<File> files) {
-        System.out.println("Please provide paths to files you wish to compare\n"
-                + "seporated by pressing enter.  If the path you provide is\n"
-                + "invalid you will be asked to re-enter it.  A second menu\n"
-                + "will appear once you type END and press enter\n");
-        String input = "";
-        while (!input.equals("END")) {
-            if (!input.equals("")){
-                File f = new File(input);
-                if (files.add(f)) {
-                    System.out.println("File added sucessfully.");
-                } else {
-                    System.out.println("File not added, please try again.");
-                }
+
+        //Load dir containing pdf's
+        File dir = new File("data/");
+        File[] dirFiles = dir.listFiles();
+
+        //Add stored pdf's to list
+        for (int i = 0; i < dirFiles.length; i++) {
+            String path = dirFiles[i].getAbsolutePath();
+            if (path.toLowerCase().endsWith(".pdf")) {
+                files.add(new File(path));
+                System.out.println(path);
             }
-            input = in.nextLine();
         }
+
+        String input = "";
         boolean menuOp = true;
-        while(menuOp) {
+        while (menuOp) {
             System.out.println("Please select an option:\n"
-                             + "1.Compare Checksums\n"
-                             + "2.Show Differences\n"
-                             + "3.Percentage Changed\n"
-                             + "4.Download Files\n"
-                             + "0.Close & Exit");
+                    + "1.Compare Checksums\n"
+                    + "2.Show Differences\n"
+                    + "3.Percentage Changed\n"
+                    + "4.Download Files\n"
+                    + "0.Close & Exit");
             input = in.nextLine();
             int sel = -1;
             try {
                 sel = Integer.parseInt(input);
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 System.out.println("Please enter a valid menu selection.");
-            }            
+            }
             if (sel != -1) {
                 doWork(sel, in, files);
             }
         }
     }
-    
+
     private static void doWork(int sel, Scanner in, LinkedList<File> files) {
         if (sel == 0) {
             System.exit(0);
@@ -74,20 +72,20 @@ public class PDFComLinInt extends Comparitor {
         } else if (sel == 4) {
             showDownloadOptions(in, files);
         }
-        
+
     }
-    
+
     private static void compCheck(Scanner in, LinkedList<File> files) {
         int[] sels = showFiles(in, files);
-        if (sels[0] != -1 || sels[1]  != -1) {
+        if (sels[0] != -1 || sels[1] != -1) {
             if (compareChecksums(files.get(sels[0]), files.get(sels[1]), MD5)) {
                 System.out.println("Files match");
             } else {
                 System.out.println("Files do not match");
             }
-        }        
+        }
     }
-    
+
     private static int[] showFiles(Scanner in, LinkedList<File> files) {
         for (File f : files) {
             System.out.println(files.indexOf(f) + "|" + f.getName());
@@ -96,46 +94,61 @@ public class PDFComLinInt extends Comparitor {
         int a = -1, b = -1;
         String input = in.nextLine();
         try {
-            a = Integer.parseInt(input.substring(0,1));
-            b = Integer.parseInt(input.substring(2,3));
+            a = Integer.parseInt(input.substring(0, 1));
+            b = Integer.parseInt(input.substring(2, 3));
             System.out.println(a + "|" + b);
-        } catch(NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             System.out.println("Please enter a valid menu selection.");
             showFiles(in, files);
-        }  
-        return new int[] {a, b};
+        }
+        return new int[]{a, b};
     }
-    
+
     private static void showDiff(Scanner in, LinkedList<File> files) {
         int[] sels = showFiles(in, files);
-        if (sels[0] != -1 || sels[1]  != -1) {
-            LinkedList<String> diffs = getDifference(files.get(sels[0]), 
+        if (sels[0] != -1 || sels[1] != -1) {
+            LinkedList<String> diffs = getDifference(files.get(sels[0]),
                     files.get(sels[1]));
             for (String s : diffs) {
                 System.out.println(s);
             }
-        } 
+        }
     }
-    
+
     private static void showPercentChanged(Scanner in, LinkedList<File> files) {
         int[] sels = showFiles(in, files);
-        if (sels[0] != -1 || sels[1]  != -1) {
-            double[] percs = percentageChanged(getDifference(files.get(sels[0]), 
+        if (sels[0] != -1 || sels[1] != -1) {
+            double[] percs = percentageChanged(getDifference(files.get(sels[0]),
                     files.get(sels[1])));
-            System.out.println("Removed:\t" + percs[0]);            
-            System.out.println("Added:\t" + percs[1]);            
-            System.out.println("Equal:\t" + percs[2]);            
+            System.out.println("Removed:\t" + percs[0] + "\nAdded:\t" + percs[1] + "\nEqual:\t" + percs[2]);
         }
     }
 
     private static void showDownloadOptions(Scanner in, LinkedList<File> files) {
+        System.out.println("Please provide a name for these pdf's");
+        String name = in.nextLine();
         System.out.println("Please provide a url to look for pdf's.");
         String input = "";
+        LinkedList<File> temp = new LinkedList<File>();
         while (!input.equals("END")) {
-            if (!input.equals("")){
-                files.addAll(downloadPDFS(input));
+            if (!input.equals("")) {
+                for (File f : downloadPDFS(input, name)) {
+                    for (File g : files) {
+                        if(f.getName().equals(g.getName())) {
+                            if(!compareChecksums(g, f, MD5)) {
+                                if (!temp.contains(f)) {
+                                    temp.add(f);
+                                    double[] percs = percentageChanged(getDifference(g, f));
+                                    System.out.println("Removed:\t" + percs[0] + "\nAdded:\t" 
+                                            + percs[1] + "\nEqual:\t" + percs[2]);
+                                }                            
+                            }
+                        }
+                    }   
+                }
             }
             input = in.nextLine();
         }
+        files.addAll(temp);
     }
 }

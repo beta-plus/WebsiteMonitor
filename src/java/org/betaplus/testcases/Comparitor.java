@@ -65,18 +65,18 @@ public class Comparitor {//implements PDFComparitorInterface {
     public static boolean compareChecksums(File fileA, File fileB, int digestType) {
         //InputStreams for checksum generation
         InputStream isA = null;
-        InputStream isB = null;
-        //The strings to compare
-        String digestA = "a";
-        String digestB = "b";
+        InputStream isB = null;        
+        //Bool to return
+        boolean tf = false;
         try {
             //Construct streams
             isA = new FileInputStream(fileA);
             isB = new FileInputStream(fileB);
             //Genorate & recover checksums
             String[] checkSums = getChecksums(isA, isB, digestType);
-            digestA = checkSums[0];
-            digestB = checkSums[1];
+            String digestA = checkSums[0];
+            String digestB = checkSums[1];
+            tf = digestA.equals(digestB);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Comparitor.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -88,7 +88,7 @@ public class Comparitor {//implements PDFComparitorInterface {
                 Logger.getLogger(Comparitor.class.getName()).log(Level.SEVERE, null, ex);
             }
             //Final comparison
-            return digestA.equals(digestB);
+            return tf;
         }
     }
 
@@ -245,7 +245,7 @@ public class Comparitor {//implements PDFComparitorInterface {
      * @param url
      * @return 
      */
-    public static LinkedList<File> downloadPDFS(String url) {
+    public static LinkedList<File> downloadPDFS(String url, String name) {
         LinkedList<File> pdfs = new LinkedList<File>();
         try {
             URL host = new URL(url);
@@ -256,8 +256,8 @@ public class Comparitor {//implements PDFComparitorInterface {
                 String absUrl = e.absUrl("href");
                 System.out.println(absUrl);
                 if (absUrl.contains("file") || absUrl.contains(".pdf")) {
-                    //File f = new File(downloadFile(e.absUrl("href"), "temp"));
-                    File f = new File(downloadFile(absUrl, "File" + c++));
+                    int len = absUrl.length();
+                    File f = new File(downloadFile(absUrl, name + absUrl.substring(len - 18, len)));
                     pdfs.add(f);
                 }                   
             }
@@ -281,10 +281,9 @@ public class Comparitor {//implements PDFComparitorInterface {
         //Get a connection to the URL and start up a buffered reader.
         URL url = new URL(urlIn);
         url.openConnection();
-        InputStream reader = url.openStream();
- 
+        InputStream reader = url.openStream();        
         //Setup a buffered file writer to write out what is read from URL.
-        FileOutputStream writer = new FileOutputStream("data/" + urlOut);
+        FileOutputStream writer = new FileOutputStream("data/" + urlOut + ".pdf");
         
         byte[] buffer = new byte[153600];
         int bytesRead; 
@@ -295,6 +294,6 @@ public class Comparitor {//implements PDFComparitorInterface {
         writer.close();
         reader.close();
         
-        return urlOut;
+        return "data/" + urlOut + ".pdf";
     }
 }

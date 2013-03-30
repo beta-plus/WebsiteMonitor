@@ -56,6 +56,7 @@ public class HTMLReader {
     
     public void printText() {
         System.out.println(doc.body().text());
+       
     }
 
     public void removeMarkup() {

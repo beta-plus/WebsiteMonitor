@@ -10,15 +10,17 @@ import java.util.LinkedList;
 /**
  * Class defining data held on a given web source.
  * 
- * @author StephenJohnRussell
+ * @author StephenJohnRussell  
  * @version 0.1
  */
 public class WebSource {
     
     private String webPageURL;
     private String rssURL;
-   // private 
-    private LinkedList<File> pdfDocs;
+    private LinkedList<String> rssText;
+    private LinkedList<String> pdfDocs;
+    private LinkedList<String> webText;
+    
     
     
 }

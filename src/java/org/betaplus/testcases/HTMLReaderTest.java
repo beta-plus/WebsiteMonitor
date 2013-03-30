@@ -8,7 +8,7 @@ public class HTMLReaderTest
         System.out.println("Starting HTML Reader Test...");
         
         String url = "http://www.oracle.com/index.html";
-        
+
         System.out.println("Creating new HTML Reader to read \"" + url + "\"...");
         reader.setSource(url);
         
