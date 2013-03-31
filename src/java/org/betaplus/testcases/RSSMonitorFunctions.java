@@ -121,8 +121,6 @@ public class RSSMonitorFunctions
             System.out.println("New inserts made = " + newInserts);
         } else
         {
-            System.out.println("First time!");
-            
             stat.execute("INSERT INTO urls (Url, Type) VALUES('" + url + "','rss')");
             
             ResultSet getUrlId = stat.executeQuery("SELECT UrlId FROM urls WHERE url= '" + url + "'");
