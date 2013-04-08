@@ -100,7 +100,7 @@ public class RSSMonitorFunctions
                     {
                         stat.execute("UPDATE rss SET LinkDes='" + linkDes
                                 + "',LinkPubDate='" + linkPubDate + "',LinkLink='"
-                                + linkLink + "'WHERE LinkTitle='" + linkTitle + "')");
+                                + linkLink + "'WHERE LinkTitle='" + linkTitle + "'");
                         changesMade += 1;
                         System.out.println("New!\n");
                     } else

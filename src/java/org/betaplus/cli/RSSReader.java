@@ -62,7 +62,7 @@ public class RSSReader {
                 if (!newDate.equals(oldDate)) {
                     stat.execute("UPDATE rss SET LinkDes='" + linkDes
                             + "',LinkPubDate='" + linkPubDate + "',LinkLink='"
-                            + linkLink + "'WHERE LinkTitle='" + linkTitle + "')");
+                            + linkLink + "'WHERE LinkTitle='" + linkTitle + "'");
                 }
             } else {
                 stat.execute("INSERT INTO rss (FeedTitle,FeedDes,LinkTitle,LinkDes,LinkPubDate,LinkLink,UrlId)"
