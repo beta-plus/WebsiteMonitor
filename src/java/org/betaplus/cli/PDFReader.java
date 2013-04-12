@@ -54,33 +54,33 @@ public class PDFReader {
                 + "AND DLDate= (select max(DLDate) FROM pdfs WHERE UrlID= '" + urlID + "')");
 
         if (latestEntry.next()) {
-            boolean valid = c.downloadFile(url, "Temp");
+            boolean valid = c.downloadFile(url, "pdf", "Temp");
 
             if (valid) {
                 String locDir = latestEntry.getString("LocationDir");
-                file1 = new File("pdf/" + pdfName(locDir, 0) + ".pdf");
+                file1 = new File("pdf/" + urlID + "/" + pdfName(locDir, 0) + ".pdf");
                 file2 = new File("pdf/Temp.pdf");
 
                 boolean equal = c.compareChecksums(file1, file2, 0);
 
                 if (!equal) {
                     String name = pdfName(locDir, 1);
-                    c.downloadFile(url, name);
+                    c.downloadFile(url, Integer.toString(urlID), name);
 
                     stat.execute("INSERT INTO pdfs (LocationDir,UrlId)"
-                            + "VALUES('pdf/" + name + ".pdf','" + urlID + "')");
+                            + "VALUES('pdf/" + urlID + "/" + name + ".pdf','" + urlID + "')");
                 }
             }
         } else {
             int index1 = url.toString().lastIndexOf("/") + 1;
             int index2 = url.toString().lastIndexOf(".");
             String name = url.toString().substring(index1, index2);
-
-            boolean valid = c.downloadFile(url, name + "_1");
+            new File("pdf/" + urlID).mkdir();
+            boolean valid = c.downloadFile(url, Integer.toString(urlID), name + "_1");
 
             if (valid) {
                 stat.execute("INSERT INTO pdfs (LocationDir,UrlId)"
-                        + "VALUES('pdf/" + name + "_1.pdf','" + urlID + "')");
+                        + "VALUES('pdf/" + urlID + "/" + name + "_1.pdf','" + urlID + "')");
             }
         }
     }

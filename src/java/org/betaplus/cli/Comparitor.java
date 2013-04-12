@@ -265,13 +265,19 @@ public class Comparitor {//implements PDFComparitorInterface {
      *
      * @throws IOException ,MalformedURLException
      */
-    public static boolean downloadFile(URL url, String name) {
+    public static boolean downloadFile(URL url, String folderID, String name) {
         try {
+            String directory;
             //Get a connection to the URL and start up a buffered reader.
             url.openConnection();
             InputStream reader = url.openStream();
+            if(folderID.equals("pdf"))
+                directory = folderID;
+            else
+                directory = "pdf/" + folderID;
+            
             //Setup a buffered file writer to write out what is read from URL.
-            FileOutputStream writer = new FileOutputStream("pdf/" + name + ".pdf");
+            FileOutputStream writer = new FileOutputStream(directory + "/" + name + ".pdf");
 
             byte[] buffer = new byte[153600];
             int bytesRead;
