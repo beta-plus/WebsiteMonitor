@@ -1,0 +1,181 @@
+@charset "utf-8";
+/* CSS Document */
+
+#temp {
+    margin-left: 2%;
+}
+
+body
+{
+	margin: 0px;
+	min-width: 600px;
+	min-height: 300px;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+#container
+{
+	position: relative;
+	width: auto;
+	height: 500px;
+	margin: 0;
+}
+
+#header
+{
+	width: 100%;
+	height: 120px;
+	background-image: url(images/headerbackground.png);
+	background-size: auto;
+}
+
+#titletext
+{
+	margin-top: 5%;
+    margin-left: 2.5%;
+    font-size: 200%;
+}
+
+#navbar
+{
+	position: absolute;
+	left: 0px;
+	top: 90px;
+    width: 100%;
+    margin-left: 2%;
+}
+
+#navbar ul 
+{ 	
+	margin: 0; 	
+ 	padding: 0;
+	text-align: center; 		
+}
+
+#navbar ul li 
+{  	
+	display: inline; 
+}
+
+#navbar ul li a 
+{
+    float: left;
+	
+	padding: 6.5px 10px;
+	width: auto;
+	color: #000; 	
+	text-decoration: none;
+	border-right: 1px solid #999;
+}  
+#navbar ul li a:hover 
+{ 	
+	background-image: url(images/buttonhover.png);
+} 
+
+#contentbody
+{
+}
+
+#overview
+{
+    position: absolute;
+	width: 70%;
+	height: 100%;	
+	border: 1px solid #90C;
+}
+
+#overview2
+{
+    position: absolute;
+	width: 40%;
+	height: 100%;	
+	border: 1px solid #90C;
+}
+
+#recent
+{
+	position: absolute;
+	top: 120px;
+	right: 0px;
+	width: 30%;
+	height: 100%;
+	border: 1px solid #CC3;
+}
+
+#recent2
+{
+	position: absolute;
+	top: 120px;
+	right: 0px;
+	width: 60%;
+	height: 100%;
+	border: 1px solid #CC3;
+}
+
+.tabArea {
+  font-size: 80%;
+  font-weight: bold;
+}
+
+.tab {
+  background-color: #f0f0f0;
+  border: 1px solid #000000;
+  border-bottom-width: 0px;
+  padding: 2px 1em 2px 1em;
+  position: relative;
+  text-decoration: none;
+  top: -1px;
+  z-index: 100;
+}
+
+.tab, .tab:visited {
+  color: #808080;
+}
+
+.tab:hover {
+  background-color: #d0d0d0;
+  color: #606060;
+}
+
+.tabMain {
+  background-color: #c0c0c0;
+  border: 1px solid #000000;
+  padding: 1em;
+  position: relative;
+  z-index: 101;
+}
+
+.tabIframeWrapper {
+  width: auto;
+}
+
+.tabContent {
+  background-color: #c0c0c0;
+  border: 1px solid #000000;
+  width: 100%;
+  height: 80%;
+}
+
+#changedetails
+{
+    margin-top: 2%;
+    margin-left: 2%;
+}
+
+#change
+{
+    margin-left: 2%;
+}
+
+#docviewerdiv
+{
+    margin-top: 2%;
+    margin-left: 2%;
+}
+
+#listviewerdiv
+{
+    margin-top: 2%;
+    margin-left: 2%;
+}
