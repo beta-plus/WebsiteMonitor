@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="stylesheet.css" />
@@ -26,7 +27,7 @@
                     <div id="listviewerdiv">
                         <span style="font-size: 125%">Mailing List<br/><br/></span>
                         <div id="temp">
-                            <span>THE COMPLETE USER/MAILING LIST WILL BE HERE</span>
+                            <span><h:outputText value="#{mailListBean.getUsers()}" escape="false"/></span>
                         </div>
                     </div>
                 </div>
