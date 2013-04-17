@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+        <title>Website Monitor - URL List</title>
+    </head>
+    <body>
+        <div id="container">
+            <div id="header">
+                <div id="titletext">
+                    <span>Website Monitor - URL List</span>
+                </div>
+                <div id="navbar">
+                    <ul> 	
+                        <li><a href="index.xhtml">Home</a></li> 	
+                        <li><a href="docview.xhtml">Document Viewer</a></li> 	
+                        <li><a href="maillist.xhtml">Mail List</a></li>
+                        <li><a href="urllist.xhtml">URL List</a></li>
+                    </ul> 
+                </div>
+            </div>
+            <div id="contentbody">
+                <div id="overview2">
+                    <div id="listviewerdiv">
+                        <span style="font-size: 125%">URL List<br/><br/></span>
+                        <div id="temp">
+                            <span><h:outputText value="#{urlListBean.getURL()}" escape="false"/></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="recent2">
+                    <div class="tabArea">
+                       <a class="tab" href="pages/addurllist.xhtml" target="myIframe">Add</a>
+                       <a class="tab" href="pages/editurllist.xhtml" target="myIframe">Edit</a>
+                       <a class="tab" href="pages/deleteurllist.xhtml" target="myIframe">Remove</a>
+                   </div>
+                   <div class="tabMain">
+                       <div class="tabIframeWrapper">
+                       <iframe class="tabContent" name="myIframe" src="pages/addurllist.xhtml"
+                               accesskey="" marginheight="8" marginwidth="8" frameborder="0"></iframe>
+                       </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

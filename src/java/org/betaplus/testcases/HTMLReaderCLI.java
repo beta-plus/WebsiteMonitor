@@ -33,7 +33,7 @@ public class HTMLReaderCLI
         
         System.out.println("Reading HTML from \"" + url + "\"...");
         reader.readHTML();
-        
+
         System.out.println("Removing Markup...");
         reader.removeMarkup();
         
