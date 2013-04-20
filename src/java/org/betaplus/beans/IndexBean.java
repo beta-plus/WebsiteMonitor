@@ -124,8 +124,23 @@ public class IndexBean {
      */
     private void getConnection() throws Exception
     {
-        SimpleDataSource.init("C:\\Users\\Ben\\Desktop\\Uni\\Software Hut\\"
-                + "Project\\WebsiteMonitor\\data\\database.properties");
+        // Need absolute path if running directly in Glassfish, can use relative if deployed within a WAR
+        
+        // Ben's absolute path
+        //SimpleDataSource.init("C:\\Users\\Ben\\Desktop\\Uni\\Software Hut\\"
+        //        + "Project\\WebsiteMonitor\\data\\database.properties");
+        
+        // James's absolute path
+        SimpleDataSource.init("/Users/Jay/Documents/Documents/University Work"
+                + "/Year 02/Year 02 - Semester 02/NetBeans Projects/Software Hut"
+                + "/Website Monitor/data/database.properties");
+        
+        // Steve's absolute path
+        //SimpleDataSource.init("");
+        
+        // Relative path
+        //SimpleDataSource.init("/WEB-INF/database.properties");
+        
         conn = SimpleDataSource.getConnection();
         stat = conn.createStatement();
     }
