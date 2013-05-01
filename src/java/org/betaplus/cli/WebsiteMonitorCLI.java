@@ -46,12 +46,12 @@ public class WebsiteMonitorCLI
         
         System.out.print("\n Enter the option you wish to choose (1,2,3,0) :> ");
         
-        switch(in.nextLine())
+        switch(in.nextLine().toLowerCase().charAt(0))
         {
-            case "1": doURLMenu(); break;
-            case "2": doUserMenu(); break;
-            case "3": scanner.scan(); doMainMenu(); break;
-            case "0": System.exit(0); break;
+            case '1': doURLMenu(); break;
+            case '2': doUserMenu(); break;
+            case '3': scanner.scan(); doMainMenu(); break;
+            case '0': System.exit(0); break;
             default: System.out.println("Not A Valid Option"); doMainMenu();
         }
     }
@@ -72,12 +72,12 @@ public class WebsiteMonitorCLI
         
         System.out.print("\n Enter the option you wish to choose (1,2,3,0) :> ");
         
-        switch(in.nextLine())
+        switch(in.nextLine().toLowerCase().charAt(0))
         {
-            case "1": doAddURL(); break;
-            case "2": doRemoveURL(); break;
-            case "3": doViewURL(); break;
-            case "0": doMainMenu(); break;
+            case '1': doAddURL(); break;
+            case '2': doRemoveURL(); break;
+            case '3': doViewURL(); break;
+            case '0': doMainMenu(); break;
             default: System.out.println("Not A Valid Option"); doURLMenu();
         }
     }
@@ -98,12 +98,12 @@ public class WebsiteMonitorCLI
         
         System.out.print("\n Enter the option you wish to choose (1,2,3,0) :> ");
         
-        switch(in.nextLine())
+        switch(in.nextLine().toLowerCase().charAt(0))
         {
-            case "1": doAddUser(); break;
-            case "2": doRemoveUser(); break;
-            case "3": doViewUser(); break;
-            case "0": doMainMenu(); break;
+            case '1': doAddUser(); break;
+            case '2': doRemoveUser(); break;
+            case '3': doViewUser(); break;
+            case '0': doMainMenu(); break;
             default: System.out.println("Not A Valid Option"); doUserMenu();
         }
     }
@@ -133,10 +133,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Try Again (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doAddURL(); break;
-                    case "n": doURLMenu(); break;
+                    case 'y': doAddURL(); break;
+                    case 'n': doURLMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -144,10 +144,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Enter Another (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doAddURL(); break;
-                    case "n": doURLMenu(); break;
+                    case 'y': doAddURL(); break;
+                    case 'n': doURLMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -177,10 +177,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Try Again (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doAddUser(); break;
-                    case "n": doUserMenu(); break;
+                    case 'y': doAddUser(); break;
+                    case 'n': doUserMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -188,10 +188,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Enter Another (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doAddUser(); break;
-                    case "n": doUserMenu(); break;
+                    case 'y': doAddUser(); break;
+                    case 'n': doUserMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -221,10 +221,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Try Again (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doRemoveURL(); break;
-                    case "n": doURLMenu(); break;
+                    case 'y': doRemoveURL(); break;
+                    case 'n': doURLMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -232,10 +232,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Remove Another (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doRemoveURL(); break;
-                    case "n": doURLMenu(); break;
+                    case 'y': doRemoveURL(); break;
+                    case 'n': doURLMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -263,10 +263,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Try Again (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doRemoveUser(); break;
-                    case "n": doUserMenu(); break;
+                    case 'y': doRemoveUser(); break;
+                    case 'n': doUserMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -274,10 +274,10 @@ public class WebsiteMonitorCLI
             {
                 System.out.print(" Remove Another (Y/N) :> ");
             
-                switch(in.nextLine().toLowerCase())
+                switch(in.nextLine().toLowerCase().charAt(0))
                 {
-                    case "y": doRemoveUser(); break;
-                    case "n": doUserMenu(); break;
+                    case 'y': doRemoveUser(); break;
+                    case 'n': doUserMenu(); break;
                     default: System.out.println("Entry not valid.");
                 }
             }
@@ -301,10 +301,10 @@ public class WebsiteMonitorCLI
         {
             System.out.print(" Print Again (Y/N) :> ");
             
-            switch(in.nextLine().toLowerCase())
+            switch(in.nextLine().toLowerCase().charAt(0))
             {
-                case "y": doViewURL(); break;
-                case "n": doURLMenu(); break;
+                case 'y': doViewURL(); break;
+                case 'n': doURLMenu(); break;
                 default: System.out.println("Entry not valid.");
             }
         }
@@ -325,10 +325,10 @@ public class WebsiteMonitorCLI
         {
             System.out.print(" Print Again (Y/N) :> ");
             
-            switch(in.nextLine().toLowerCase())
+            switch(in.nextLine().toLowerCase().charAt(0))
             {
-                case "y": doViewUser(); break;
-                case "n": doUserMenu(); break;
+                case 'y': doViewUser(); break;
+                case 'n': doUserMenu(); break;
                 default: System.out.println("Entry not valid.");
             }
         }
