@@ -22,73 +22,79 @@ import org.betaplus.testcases.SimpleDataSource;
  */
 @ManagedBean
 @RequestScoped
-public class MailListBean {
+public class RssBean {
     private Connection conn;
     private Statement stat;
     private HtmlDataTable dataTable;
-    private List<UserData> dataList = new LinkedList();
+    private List<RSSData> changesList = new LinkedList();
+    private List<RSSData> latestList = new LinkedList();
     private HtmlInputHidden dataItemId = new HtmlInputHidden();
-    private UserData dataItem = new UserData();
+    private RSSData dataItem = new RSSData();
     
-    
-    // Action Methods ----------------------------------------------------------
-    private void loadDataList() throws Exception {
+    private void loadChangesList() throws Exception {
         getConnection();
-        dataList.clear();
-        ResultSet rs = stat.executeQuery("SELECT * FROM users");
+        changesList.clear();
+        ResultSet rs = stat.executeQuery("SELECT rss.*, urls.Url, urls.Type "
+                + "FROM rss, urls WHERE rss.UrlId=urls.UrlId ORDER BY DlDate DESC");
         while(rs.next()) { 
-            UserData user = new UserData();
-            user.setUserID(rs.getString(1));
-            user.setUserName(rs.getString(2));
-            user.setUserEmail(rs.getString(3));
-            dataList.add(user);
+            RSSData rss = new RSSData();
+            rss.setRssID(rs.getString(1));
+            rss.setFeedTitle(rs.getString(2));
+            rss.setFeedDes(rs.getString(3));
+            rss.setLinkTitle(rs.getString(4));
+            rss.setLinkDes(rs.getString(5));
+            rss.setLinkPubDate(rs.getString(6));
+            rss.setLinkLink(rs.getString(7));
+            rss.setDlDate(rs.getString(8).substring(0, 10));
+            rss.setUrlID(rs.getString(9));
+            rss.setUrl(rs.getString(10));
+            rss.setType(rs.getString(11));
+            changesList.add(rss);
         }
     }
     
-    public void selectDataItem() {
+    private void loadLatestList() throws Exception {
+        getConnection();
+        latestList.clear();
+        ResultSet rs = stat.executeQuery("SELECT rss.*, urls.Url, urls.Type "
+                + "FROM rss, urls WHERE rss.UrlId=urls.UrlId GROUP BY rss.UrlId");
+        while(rs.next()) { 
+            RSSData rss = new RSSData();
+            rss.setRssID(rs.getString(1));
+            rss.setFeedTitle(rs.getString(2));
+            rss.setFeedDes(rs.getString(3));
+            rss.setLinkTitle(rs.getString(4));
+            rss.setLinkDes(rs.getString(5));
+            rss.setLinkPubDate(rs.getString(6));
+            rss.setLinkLink(rs.getString(7));
+            rss.setDlDate(rs.getString(8).substring(0, 10));
+            rss.setUrlID(rs.getString(9));
+            rss.setUrl(rs.getString(10));
+            rss.setType(rs.getString(11));
+            latestList.add(rss);
+        }
+    }
+    
+    public void selectChange() {
         // Obtain the row index from the hidden input element.
         String rowIndex = FacesContext.getCurrentInstance().getExternalContext()
             .getRequestParameterMap().get("rowIndex");
         if (rowIndex != null && rowIndex.trim().length() != 0) {
             int curIndex = dataTable.getFirst() + Integer.parseInt(rowIndex);
-            dataItem = dataList.get(curIndex-1);
-            dataItemId.setValue(dataItem.getUserID());
+            dataItem = changesList.get(curIndex-1);
+            dataItemId.setValue(dataItem.getRssID());
         }
     }
     
-    public void updateDataItem() throws Exception {
-        getConnection();
-        // Retain the ID of the data item from hidden input element.
-        dataItem.setUserID(dataItemId.getValue().toString());
-
-        stat.execute("UPDATE users SET"
-                + " UserName='" + dataItem.getUserName() + "',"
-                + " UserEmail='" + dataItem.getUserEmail() + "' "
-                + " WHERE UserId='" + dataItem.getUserID() + "'");
-        clearDataItem();
-    }
-    
-    public void newDataItem() throws Exception {
-        getConnection();
-
-        stat.execute("INSERT INTO users (UserName, UserEmail) VALUES ('"
-                + dataItem.getUserName() + "', '"
-                + dataItem.getUserEmail() + "')");
-        clearDataItem();
-    }
-    
-    public void deleteSelectedItems() throws Exception {
-        getConnection();
-        
-        dataItem.setUserID(dataItemId.getValue().toString());
-        
-        stat.execute("DELETE FROM users WHERE UserId='" 
-            + dataItem.getUserID() + "'");
-        clearDataItem();
-    }
-    
-    public void clearDataItem() {
-        dataItem = new UserData();
+    public void selectDocument() {
+        // Obtain the row index from the hidden input element.
+        String rowIndex = FacesContext.getCurrentInstance().getExternalContext()
+            .getRequestParameterMap().get("rowIndex");
+        if (rowIndex != null && rowIndex.trim().length() != 0) {
+            int curIndex = dataTable.getFirst() + Integer.parseInt(rowIndex);
+            dataItem = latestList.get(curIndex-1);
+            dataItemId.setValue(dataItem.getRssID());
+        }
     }
     
     // Navigation Methods ------------------------------------------------------
@@ -124,34 +130,23 @@ public class MailListBean {
     }
     
     // Getter Methods ----------------------------------------------------------
-    public List<UserData> getDataList() throws Exception {
-        loadDataList();
-        return dataList;
+    public List<RSSData> getChangesList() throws Exception {
+        loadChangesList();
+        return changesList;
+    }
+    
+    public List<RSSData> getLatestList() throws Exception {
+        loadLatestList();
+        return latestList;
     }
     
     public HtmlDataTable getDataTable() {
         return dataTable;
     }
     
-    public UserData getDataItem() {
-        return dataItem;
-    }
-    
-    public HtmlInputHidden getDataItemId() {
-        return dataItemId;
-    }
-    
     // Setter Methods ----------------------------------------------------------
     public void setDataTable(HtmlDataTable dataTable) {
         this.dataTable = dataTable;
-    }
-    
-    public void setDataItem(UserData dataItem) {
-        this.dataItem = dataItem;
-    }
-    
-    public void setDataItemId(HtmlInputHidden dataItemId) {
-        this.dataItemId = dataItemId;
     }
     
     /**
