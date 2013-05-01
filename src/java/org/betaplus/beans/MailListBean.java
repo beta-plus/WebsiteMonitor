@@ -14,6 +14,7 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.component.html.HtmlInputHidden;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import org.betaplus.testcases.SimpleDataSource;
 
 /**
@@ -162,22 +163,9 @@ public class MailListBean {
      */
     private void getConnection() throws Exception
     {
-        // Need absolute path if running directly in Glassfish, can use relative if deployed within a WAR
-        
-        // Ben's absolute path
-        SimpleDataSource.init("C:\\Users\\Ben\\Desktop\\Uni\\Software Hut\\"
-                + "Project\\WebsiteMonitor\\data\\database.properties");
-        
-        // James's absolute path
-        //SimpleDataSource.init("/Users/Jay/Documents/Documents/University Work"
-        //        + "/Year 02/Year 02 - Semester 02/NetBeans Projects/Software Hut"
-        //        + "/Website Monitor/data/database.properties");
-        
-        // Steve's absolute path
-        //SimpleDataSource.init("");
-        
-        // Relative path
-        //SimpleDataSource.init("/WEB-INF/database.properties");
+        String fp = ((ServletContext) FacesContext.getCurrentInstance()
+                .getExternalContext().getContext()).getRealPath("/");
+        SimpleDataSource.init(fp + "data/database.properties");
         
         conn = SimpleDataSource.getConnection();
         stat = conn.createStatement();
