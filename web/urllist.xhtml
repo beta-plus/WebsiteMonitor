@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="stylesheet.css" />
         <title>Website Monitor - URL List</title>
+        <script>
+            //<![CDATA[
+            function addOnclickToDatatableRows() {
+                var trs = document.getElementById('form:dataTable').getElementsByTagName('tbody')[0]
+                .getElementsByTagName('tr');
+                for (var i = 0; i < trs.length; i++) {
+                    trs[i].onmouseover = new Function("this.bgColor='#d0d0d0'");
+                    trs[i].onmouseout = new Function("this.bgColor='#ffffff'");
+                    trs[i].onclick = new Function("highlightAndSelectRow(this)");
+                }
+            }
+
+            function highlightAndSelectRow(tr) {
+                var trs = document.getElementById('form:dataTable').getElementsByTagName('tbody')[0]
+                .getElementsByTagName('tr');
+                for (var i = 0; i < trs.length; i++) {
+                    if (trs[i] == tr) {
+                        document.form.rowIndex.value = trs[i].rowIndex;
+                        document.getElementById('form:updateEdit').click();
+                    }                    
+                }
+            }
+
+            window.onload = addOnclickToDatatableRows;
+            //]]>
+        </script>
     </head>
     <body>
         <div id="container">
@@ -22,28 +49,79 @@
                     </ul> 
                 </div>
             </div>
+            <div id="editrecord">
+                <h:form>
+                    <h:panelGrid columns="3" width="100%">
+                        <h:outputText value="UrlID" />
+                        <h:outputText value="Url" />
+                        <h:outputText value="Type" />
+
+                        <h:outputText value="#{urlListBean.dataItem.urlID}" />
+                        <h:inputText id="url" value="#{urlListBean.dataItem.url}" />
+                        <h:inputText id="type" value="#{urlListBean.dataItem.type}" />
+                    </h:panelGrid>
+                    <h:inputHidden binding="#{urlListBean.dataItemId}" />
+                    <h:commandButton value="Update" action="#{urlListBean.updateDataItem}" />
+                    <h:commandButton value="Delete" action="#{urlListBean.deleteSelectedItems}" />
+                    <h:commandButton value="New" action="#{urlListBean.newDataItem}" />
+                    <h:commandButton value="Clear" action="#{urlListBean.clearDataItem()}"/>
+                </h:form>
+            </div>
             <div id="contentbody">
-                <div id="overview2">
-                    <div id="listviewerdiv">
-                        <span style="font-size: 125%">URL List<br/><br/></span>
-                        <div id="overviewContent">
-                            <span><h:outputText value="#{urlListBean.getURL()}" escape="false"/></span>
-                        </div>
-                    </div>
-                </div>
-                <div id="recent2">
-                    <div class="tabArea">
-                       <a class="tab" href="pages/addurllist.xhtml" target="myIframe">Add</a>
-                       <a class="tab" href="pages/editurllist.xhtml" target="myIframe">Edit</a>
-                       <a class="tab" href="pages/deleteurllist.xhtml" target="myIframe">Remove</a>
-                   </div>
-                   <div class="tabMain">
-                       <div class="tabIframeWrapper">
-                       <iframe class="tabContent" name="myIframe" src="pages/addurllist.xhtml"
-                               accesskey="" marginheight="8" marginwidth="8" frameborder="0"></iframe>
-                       </div>
-                   </div>
-                </div>
+                <h:form id="form">
+                    <h:dataTable id="dataTable" styleClass="view-table"
+                                 headerClass="view-table-header"
+                                 rowClasses="view-table-odd-row,view-table-even-row"
+                                 binding="#{urlListBean.dataTable}" 
+                                 value="#{urlListBean.dataList}" 
+                                 var="dataItem" rows="10">
+
+                        <h:column>
+                            <f:facet name="header">
+                                URL ID
+                            </f:facet>
+                            #{dataItem.urlID}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                URL
+                            </f:facet>
+                            #{dataItem.url}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                Type
+                            </f:facet>
+                            #{dataItem.type}
+                        </h:column>
+
+                    </h:dataTable>  
+                    <input type="hidden" name="rowIndex" />
+                    <h:commandLink id="updateEdit" type="hidden" 
+                                   immediate="true" action="#{urlListBean.selectDataItem()}"/> 
+                </h:form>
+            </div>
+            <div id="navbtn">
+                <h:form>
+                    <h:panelGrid columns="4" width="100%">
+                        <h:commandButton value="first" 
+                                         action="#{urlListBean.pageFirst}"
+                                         disabled="#{urlListBean.dataTable.first == 0}" />
+                        <h:commandButton value="prev" 
+                                         action="#{urlListBean.pagePrevious}"
+                                         disabled="#{urlListBean.dataTable.first == 0}" />
+                        <h:commandButton value="next" 
+                                         action="#{urlListBean.pageNext}"
+                                         disabled="#{urlListBean.dataTable.first + urlListBean.dataTable.rows
+                                                     >= urlListBean.dataTable.rowCount}" />
+                        <h:commandButton value="last" 
+                                         action="#{urlListBean.pageLast}"
+                                         disabled="#{urlListBean.dataTable.first + urlListBean.dataTable.rows
+                                                     >= urlListBean.dataTable.rowCount}" />
+                    </h:panelGrid>
+                </h:form>
             </div>
         </div>
     </body>

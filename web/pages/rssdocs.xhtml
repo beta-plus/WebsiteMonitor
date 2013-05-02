@@ -40,8 +40,8 @@
                     styleClass="view-table"
                              headerClass="view-table-header"
                              rowClasses="view-table-odd-row,view-table-even-row"
-                             binding="#{htmlBean.dataTable}" 
-                             value="#{htmlBean.latestList}" 
+                             binding="#{rssBean.dataTable}" 
+                             value="#{rssBean.latestList}" 
                              var="dataItem" rows="18">
 
                     <h:column>
@@ -53,33 +53,33 @@
 
                     <h:column>
                         <f:facet name="header">
-                            URL
+                            Feed Title
                         </f:facet>
-                        #{dataItem.url}
+                        #{dataItem.feedTitle}
                     </h:column>
 
                 </h:dataTable> 
                 <h:commandLink id="updateEdit" type="hidden" 
-                                   immediate="true" action="#{htmlBean.selectDocument()}"/>
+                                   immediate="true" action="#{rssBean.selectDocument()}"/>
             </h:form>
         </div>
         <div id="navbtn">
             <h:form>
                 <h:panelGrid columns="4" width="100%">
                     <h:commandButton value="first" 
-                                     action="#{htmlBean.pageFirst}"
-                                     disabled="#{htmlBean.dataTable.first == 0}" />
+                                     action="#{rssBean.pageFirst}"
+                                     disabled="#{rssBean.dataTable.first == 0}" />
                     <h:commandButton value="prev" 
-                                     action="#{htmlBean.pagePrevious}"
-                                     disabled="#{htmlBean.dataTable.first == 0}" />
+                                     action="#{rssBean.pagePrevious}"
+                                     disabled="#{rssBean.dataTable.first == 0}" />
                     <h:commandButton value="next" 
-                                     action="#{htmlBean.pageNext}"
-                                     disabled="#{htmlBean.dataTable.first + htmlBean.dataTable.rows
-                                                 >= htmlBean.dataTable.rowCount}" />
+                                     action="#{rssBean.pageNext}"
+                                     disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
+                                                 >= rssBean.dataTable.rowCount}" />
                     <h:commandButton value="last" 
-                                     action="#{htmlBean.pageLast}"
-                                     disabled="#{htmlBean.dataTable.first + htmlBean.dataTable.rows
-                                                 >= htmlBean.dataTable.rowCount}" />
+                                     action="#{rssBean.pageLast}"
+                                     disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
+                                                 >= rssBean.dataTable.rowCount}" />
                 </h:panelGrid>
             </h:form>
         </div>

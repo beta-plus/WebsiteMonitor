@@ -6,10 +6,15 @@ package org.betaplus.beans;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.component.html.HtmlDataTable;
+import javax.faces.component.html.HtmlInputHidden;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import org.betaplus.testcases.SimpleDataSource;
 
 /**
@@ -21,42 +26,133 @@ import org.betaplus.testcases.SimpleDataSource;
 public class MailListBean {
     private Connection conn;
     private Statement stat;
-    String test = "test";
+    private HtmlDataTable dataTable;
+    private List<UserData> dataList = new LinkedList();
+    private HtmlInputHidden dataItemId = new HtmlInputHidden();
+    private UserData dataItem = new UserData();
     
-    /**
-     * Creates a new instance of MailListBean
-     */
-    public MailListBean() {
+    
+    // Action Methods ----------------------------------------------------------
+    private void loadDataList() throws Exception {
+        getConnection();
+        dataList.clear();
+        ResultSet rs = stat.executeQuery("SELECT * FROM users");
+        while(rs.next()) { 
+            UserData user = new UserData();
+            user.setUserID(rs.getString(1));
+            user.setUserName(rs.getString(2));
+            user.setUserEmail(rs.getString(3));
+            dataList.add(user);
+        }
     }
     
-    public String getUsers() throws Exception
-    {
-        getConnection();
-        StringBuilder str = new StringBuilder();
-        ResultSet users = stat.executeQuery("SELECT * FROM users");
-        
-        ResultSetMetaData rsmd = users.getMetaData();
-        
-        str.append("<table>");
-        str.append("<tr>");
-        str.append("<th>").append(rsmd.getColumnName(1)).append("</th>");
-        str.append("<th>").append(rsmd.getColumnName(2)).append("</th>");
-        str.append("<th>").append(rsmd.getColumnName(3)).append("</th>");
-        str.append("</tr>");
-        while(users.next())
-        {
-            String urlID = users.getString(1);
-            String url = users.getString(2);
-            String type = users.getString(3);
-            
-            str.append("<tr>");
-            str.append("<td>").append(urlID).append("</td>");
-            str.append("<td>").append(url).append("</td>");
-            str.append("<td>").append(type).append("</td>");
-            str.append("</tr>");
+    public void selectDataItem() {
+        // Obtain the row index from the hidden input element.
+        String rowIndex = FacesContext.getCurrentInstance().getExternalContext()
+            .getRequestParameterMap().get("rowIndex");
+        if (rowIndex != null && rowIndex.trim().length() != 0) {
+            int curIndex = dataTable.getFirst() + Integer.parseInt(rowIndex);
+            dataItem = dataList.get(curIndex-1);
+            dataItemId.setValue(dataItem.getUserID());
         }
-        str.append("</table>");
-        return str.toString();
+    }
+    
+    public void updateDataItem() throws Exception {
+        getConnection();
+        // Retain the ID of the data item from hidden input element.
+        dataItem.setUserID(dataItemId.getValue().toString());
+
+        stat.execute("UPDATE users SET"
+                + " UserName='" + dataItem.getUserName() + "',"
+                + " UserEmail='" + dataItem.getUserEmail() + "' "
+                + " WHERE UserId='" + dataItem.getUserID() + "'");
+        clearDataItem();
+    }
+    
+    public void newDataItem() throws Exception {
+        getConnection();
+
+        stat.execute("INSERT INTO users (UserName, UserEmail) VALUES ('"
+                + dataItem.getUserName() + "', '"
+                + dataItem.getUserEmail() + "')");
+        clearDataItem();
+    }
+    
+    public void deleteSelectedItems() throws Exception {
+        getConnection();
+        
+        dataItem.setUserID(dataItemId.getValue().toString());
+        
+        stat.execute("DELETE FROM users WHERE UserId='" 
+            + dataItem.getUserID() + "'");
+        clearDataItem();
+    }
+    
+    public void clearDataItem() {
+        dataItem = new UserData();
+    }
+    
+    // Navigation Methods ------------------------------------------------------
+    public void pageFirst() {
+        dataTable.setFirst(0);
+    }
+
+    public void pagePrevious() {
+        dataTable.setFirst(dataTable.getFirst() - dataTable.getRows());
+    }
+
+    public void pageNext() {
+        dataTable.setFirst(dataTable.getFirst() + dataTable.getRows());
+    }
+
+    public void pageLast() {
+        int count = dataTable.getRowCount();
+        int rows = dataTable.getRows();
+        dataTable.setFirst(count - ((count % rows != 0) ? count % rows : rows));
+    }
+    
+    public int getCurrentPage() {
+        int rows = dataTable.getRows();
+        int first = dataTable.getFirst();
+        int count = dataTable.getRowCount();
+        return (count / rows) - ((count - first) / rows) + 1;
+    }
+
+    public int getTotalPages() {
+        int rows = dataTable.getRows();
+        int count = dataTable.getRowCount();
+        return (count / rows) + ((count % rows != 0) ? 1 : 0);
+    }
+    
+    // Getter Methods ----------------------------------------------------------
+    public List<UserData> getDataList() throws Exception {
+        loadDataList();
+        return dataList;
+    }
+    
+    public HtmlDataTable getDataTable() {
+        return dataTable;
+    }
+    
+    public UserData getDataItem() {
+        return dataItem;
+    }
+    
+    public HtmlInputHidden getDataItemId() {
+        return dataItemId;
+    }
+    
+    // Setter Methods ----------------------------------------------------------
+    public void setDataTable(HtmlDataTable dataTable) {
+        this.dataTable = dataTable;
+    }
+    
+    public void setDataItem(UserData dataItem) {
+        this.dataItem = dataItem;
+    }
+    
+    public void setDataItemId(HtmlInputHidden dataItemId) {
+        this.dataItemId = dataItemId;
     }
     
     /**
@@ -67,22 +163,9 @@ public class MailListBean {
      */
     private void getConnection() throws Exception
     {
-        // Need absolute path if running directly in Glassfish, can use relative if deployed within a WAR
-        
-        // Ben's absolute path
-        //SimpleDataSource.init("C:\\Users\\Ben\\Desktop\\Uni\\Software Hut\\"
-        //        + "Project\\WebsiteMonitor\\data\\database.properties");
-        
-        // James's absolute path
-        SimpleDataSource.init("/Users/Jay/Documents/Documents/University Work"
-                + "/Year 02/Year 02 - Semester 02/NetBeans Projects/Software Hut"
-                + "/Website Monitor/data/database.properties");
-        
-        // Steve's absolute path
-        //SimpleDataSource.init("");
-        
-        // Relative path
-        //SimpleDataSource.init("/WEB-INF/database.properties");
+        String fp = ((ServletContext) FacesContext.getCurrentInstance()
+                .getExternalContext().getContext()).getRealPath("/");
+        SimpleDataSource.init(fp + "data/database.properties");
         
         conn = SimpleDataSource.getConnection();
         stat = conn.createStatement();

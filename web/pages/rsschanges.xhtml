@@ -1,11 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="../stylesheet.css" />
+        <script>
+            //<![CDATA[
+            function addOnclickToDatatableRows() {
+                var trs = document.getElementById('form:dataTable').getElementsByTagName('tbody')[0]
+                .getElementsByTagName('tr');
+                for (var i = 0; i < trs.length; i++) {
+                    trs[i].onmouseover = new Function("this.bgColor='#d0d0d0'");
+                    trs[i].onmouseout = new Function("this.bgColor='#ffffff'");
+                    trs[i].onclick = new Function("highlightAndSelectRow(this)");
+                }
+            }
+
+            function highlightAndSelectRow(tr) {
+                var trs = document.getElementById('form:dataTable').getElementsByTagName('tbody')[0]
+                .getElementsByTagName('tr');
+                for (var i = 0; i < trs.length; i++) {
+                    if (trs[i] == tr) {
+                        document.form.rowIndex.value = trs[i].rowIndex;
+                        document.getElementById('form:updateEdit').click();
+                    }                    
+                }
+            }
+
+            window.onload = addOnclickToDatatableRows;
+            //]]>
+        </script>
     </head>
     <body>
-        <h:outputText value="#{indexBean.getRSSChanges()}" escape="false"/>
+        <div id="tablediv">
+            <h:form id="form">
+                <h:dataTable id="dataTable"
+                    styleClass="view-table"
+                             headerClass="view-table-header"
+                             rowClasses="view-table-odd-row,view-table-even-row"
+                             binding="#{rssBean.dataTable}" 
+                             value="#{rssBean.changesList}" 
+                             var="dataItem" rows="15">
+
+                    <h:column>
+                        <f:facet name="header">
+                            Link Title
+                        </f:facet>
+                        #{dataItem.linkTitle}
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            Date
+                        </f:facet>
+                        #{dataItem.dlDate}
+                    </h:column>
+
+                </h:dataTable>
+                <input type="hidden" name="rowIndex" />
+                    <h:commandLink id="updateEdit" type="hidden" 
+                                   immediate="true" action="#{rssBean.selectChange()}">
+                    <f:actionListener binding="#{changeBean.setType('rss')}"/>
+                    </h:commandLink> 
+            </h:form>
+        </div>
+        <div id="navbtn">
+            <h:form>
+                <h:panelGrid columns="4" width="100%">
+                    <h:commandButton value="first" 
+                                     action="#{rssBean.pageFirst}"
+                                     disabled="#{rssBean.dataTable.first == 0}" />
+                    <h:commandButton value="prev" 
+                                     action="#{rssBean.pagePrevious}"
+                                     disabled="#{rssBean.dataTable.first == 0}" />
+                    <h:commandButton value="next" 
+                                     action="#{rssBean.pageNext}"
+                                     disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
+                                                 >= rssBean.dataTable.rowCount}" />
+                    <h:commandButton value="last" 
+                                     action="#{rssBean.pageLast}"
+                                     disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
+                                                 >= rssBean.dataTable.rowCount}" />
+                </h:panelGrid>
+            </h:form>
+        </div>
     </body>
 </html>

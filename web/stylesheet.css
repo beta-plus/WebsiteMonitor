@@ -183,12 +183,33 @@ body
     margin-left: 2%;
 }
 
-#overviewContent
-{
-    overflow-y: scroll;
-}
-
 #temp
 {
     margin-left: 2%;
+}
+.view-table{  
+    width: 100%;
+	border-collapse:collapse;
+        border-style: solid;
+        border-width: 1px;
+}
+.view-table-header{
+	text-align:center;
+        background:none repeat scroll 0 0 #c0c0c0;
+        border-bottom:1px solid #000000;
+	padding:16px;
+}
+.view-table-odd-row{
+	text-align:left;
+	border-top:1px solid #BBBBBB;
+}
+.view-table-even-row{
+	text-align:left;
+	border-top:1px solid #BBBBBB;
+}
+#tablediv{
+    
+}
+#navbtn{
+    
 }

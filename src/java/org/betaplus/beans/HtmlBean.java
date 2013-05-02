@@ -23,73 +23,76 @@ import org.betaplus.testcases.SimpleDataSource;
  */
 @ManagedBean
 @RequestScoped
-public class UrlListBean {
+public class HtmlBean {
     private Connection conn;
     private Statement stat;
     private HtmlDataTable dataTable;
-    private List<URLData> dataList = new LinkedList();
+    private List<HTMLData> changesList = new LinkedList();
+    private List<HTMLData> latestList = new LinkedList();
     private HtmlInputHidden dataItemId = new HtmlInputHidden();
-    private URLData dataItem = new URLData();
-  
+    private HTMLData dataItem = new HTMLData();
+    
+    
     // Action Methods ----------------------------------------------------------
-    private void loadDataList() throws Exception {
+    private void loadChangesList() throws Exception {
         getConnection();
-        dataList.clear();
-        ResultSet rs = stat.executeQuery("SELECT * FROM urls");
+        changesList.clear();
+        ResultSet rs = stat.executeQuery("SELECT html.*, urls.Url, urls.Type "
+                + "FROM html, urls WHERE urls.UrlID = html.UrlId "
+                + "ORDER BY DlDate DESC");
         while(rs.next()) { 
-            URLData url = new URLData();
-            url.setUrlID(rs.getString(1));
-            url.setUrl(rs.getString(2));
-            url.setType(rs.getString(3));
-            dataList.add(url);
+            HTMLData html = new HTMLData();
+            html.setHtmlID(rs.getString(1));
+            html.setText(rs.getString(2));
+            html.setDlDate(rs.getString(3).substring(0, 10));
+            html.setUrlID(rs.getString(4));
+            html.setUrl(rs.getString(5));
+            html.setType(rs.getString(6));
+            changesList.add(html);
         }
     }
     
-    public void selectDataItem() {
+    private void loadLatestList() throws Exception {
+        getConnection();
+        latestList.clear();
+        ResultSet rs = stat.executeQuery("SELECT html.*, urls.Url, urls.Type "
+                + "FROM html, urls "
+                + "WHERE urls.Type='html' "
+                + "AND urls.UrlId=html.UrlId");
+        while(rs.next()) { 
+            HTMLData html = new HTMLData();
+            html.setHtmlID(rs.getString(1));
+            html.setText(rs.getString(2));
+            html.setDlDate(rs.getString(3).substring(0, 10));
+            html.setUrlID(rs.getString(4));
+            html.setUrl(rs.getString(5));
+            html.setType(rs.getString(6));
+            latestList.add(html);
+        }
+    }
+    
+    public void selectChange() {
         // Obtain the row index from the hidden input element.
         String rowIndex = FacesContext.getCurrentInstance().getExternalContext()
             .getRequestParameterMap().get("rowIndex");
         if (rowIndex != null && rowIndex.trim().length() != 0) {
             int curIndex = dataTable.getFirst() + Integer.parseInt(rowIndex);
-            dataItem = dataList.get(curIndex-1);
-            dataItemId.setValue(dataItem.getUrlID());
+            dataItem = changesList.get(curIndex-1);
+            dataItemId.setValue(dataItem.getHtmlID());
         }
     }
     
-    public void updateDataItem() throws Exception {
-        getConnection();
-        // Retain the ID of the data item from hidden input element.
-        dataItem.setUrlID(dataItemId.getValue().toString());
-
-        stat.execute("UPDATE urls SET"
-                + " Url='" + dataItem.getUrl() + "',"
-                + " Type='" + dataItem.getType() + "' "
-                + " WHERE UrlId='" + dataItem.getUrlID() + "'");
-        clearDataItem();
+    public void selectDocument() {
+        // Obtain the row index from the hidden input element.
+        String rowIndex = FacesContext.getCurrentInstance().getExternalContext()
+            .getRequestParameterMap().get("rowIndex");
+        if (rowIndex != null && rowIndex.trim().length() != 0) {
+            int curIndex = dataTable.getFirst() + Integer.parseInt(rowIndex);
+            dataItem = latestList.get(curIndex-1);
+            dataItemId.setValue(dataItem.getHtmlID());
+        }
     }
     
-    public void newDataItem() throws Exception {
-        getConnection();
-
-        stat.execute("INSERT INTO urls (Url, Type) VALUES ('"
-                + dataItem.getUrl() + "', '"
-                + dataItem.getType() + "')");
-        clearDataItem();
-    }
-    
-    public void deleteSelectedItems() throws Exception {
-        getConnection();
-        
-        dataItem.setUrlID(dataItemId.getValue().toString());
-        
-        stat.execute("DELETE FROM urls WHERE UrlId='" 
-            + dataItem.getUrlID() + "'");
-        clearDataItem();
-    }
-    
-    public void clearDataItem() {
-        dataItem = new URLData();
-    }
     
     // Navigation Methods ------------------------------------------------------
     public void pageFirst() {
@@ -124,34 +127,23 @@ public class UrlListBean {
     }
     
     // Getter Methods ----------------------------------------------------------
-    public List<URLData> getDataList() throws Exception {
-        loadDataList();
-        return dataList;
+    public List<HTMLData> getChangesList() throws Exception {
+        loadChangesList();
+        return changesList;
+    }
+    
+    public List<HTMLData> getLatestList() throws Exception {
+        loadLatestList();
+        return latestList;
     }
     
     public HtmlDataTable getDataTable() {
         return dataTable;
     }
     
-    public URLData getDataItem() {
-        return dataItem;
-    }
-    
-    public HtmlInputHidden getDataItemId() {
-        return dataItemId;
-    }
-    
-    // Setter methods ----------------------------------------------------------
+    // Setter Methods ----------------------------------------------------------
     public void setDataTable(HtmlDataTable dataTable) {
         this.dataTable = dataTable;
-    }
-    
-    public void setDataItem(URLData dataItem) {
-        this.dataItem = dataItem;
-    }
-    
-    public void setDataItemId(HtmlInputHidden dataItemId) {
-        this.dataItemId = dataItemId;
     }
     
     /**
