@@ -4,7 +4,7 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Type" content="text/html/; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="../stylesheet.css" />
         <script>
             //<![CDATA[
@@ -25,8 +25,9 @@
                     if (trs[i] == tr) {
                         document.form.rowIndex.value = trs[i].rowIndex;
                         document.getElementById('form:updateEdit').click();
-                    }                    
+                    }
                 }
+                setTimeout("top.location.reload('../docview.xhtml')",10);
             }
 
             window.onload = addOnclickToDatatableRows;
@@ -37,7 +38,7 @@
         <div id="tablediv">
             <h:form id="form">
                 <h:dataTable id="dataTable"
-                    styleClass="view-table"
+                             styleClass="view-table"
                              headerClass="view-table-header"
                              rowClasses="view-table-odd-row,view-table-even-row"
                              binding="#{pdfBean.dataTable}" 
@@ -46,21 +47,24 @@
 
                     <h:column>
                         <f:facet name="header">
-                            PDF ID
-                        </f:facet>
-                        #{dataItem.pdfID}
-                    </h:column>
-
-                    <h:column>
-                        <f:facet name="header">
                             PDF Name
                         </f:facet>
                         #{dataItem.pdfName}
                     </h:column>
 
-                </h:dataTable>  
-                <h:commandLink id="updateEdit" type="hidden" 
-                                   immediate="true" action="#{pdfBean.selectDocument()}"/>
+                    <h:column>
+                        <f:facet name="header">
+                            Date
+                        </f:facet>
+                        #{dataItem.dlDate}
+                    </h:column>
+
+                </h:dataTable>
+                <input type="hidden" name="rowIndex" />
+                    <h:commandLink id="updateEdit" type="hidden" 
+                                   immediate="true" action="#{pdfBean.selectDocument()}">
+                        <f:actionListener binding="#{changeBean.setType('pdf')}"/>
+                    </h:commandLink>
             </h:form>
         </div>
         <div id="navbtn">
@@ -81,7 +85,7 @@
                                      disabled="#{pdfBean.dataTable.first + pdfBean.dataTable.rows
                                                  >= pdfBean.dataTable.rowCount}" />
                 </h:panelGrid>
-            </h:form>
+            </h:form>            
         </div>
     </body>
 </html>

@@ -145,7 +145,7 @@ body
   height: 100%;
 }
 
-.tabContent {
+#tabContent {
   background-color: #c0c0c0;
   border: 1px solid #000000;
   width: 100%;

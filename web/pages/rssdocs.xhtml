@@ -27,6 +27,7 @@
                         document.getElementById('form:updateEdit').click();
                     }                    
                 }
+                setTimeout("top.location.reload('../docview.xhtml')",10);
             }
 
             window.onload = addOnclickToDatatableRows;
@@ -58,9 +59,12 @@
                         #{dataItem.feedTitle}
                     </h:column>
 
-                </h:dataTable> 
-                <h:commandLink id="updateEdit" type="hidden" 
-                                   immediate="true" action="#{rssBean.selectDocument()}"/>
+                </h:dataTable>
+                <input type="hidden" name="rowIndex" />
+                    <h:commandLink id="updateEdit" type="hidden" 
+                                       immediate="true" action="#{rssBean.selectDocument()}">
+                        <f:actionListener binding="#{changeBean.setType('rss')}"/>
+                    </h:commandLink>
             </h:form>
         </div>
         <div id="navbtn">
