@@ -25,8 +25,9 @@
                     if (trs[i] == tr) {
                         document.form.rowIndex.value = trs[i].rowIndex;
                         document.getElementById('form:updateEdit').click();
-                    }                    
+                    }
                 }
+                setTimeout("top.location.reload('../index.xhtml')",10);
             }
 
             window.onload = addOnclickToDatatableRows;
@@ -84,7 +85,7 @@
                                      disabled="#{pdfBean.dataTable.first + pdfBean.dataTable.rows
                                                  >= pdfBean.dataTable.rowCount}" />
                 </h:panelGrid>
-            </h:form>
+            </h:form>            
         </div>
     </body>
 </html>
