@@ -15,12 +15,68 @@ import java.util.LinkedList;
  */
 public class WebSource {
     
+    private String source;
     private String webPageURL;
     private String rssURL;
     private LinkedList<String> rssText;
-    private LinkedList<String> pdfDocs;
+    private LinkedList<File> pdfDocs;
     private LinkedList<String> webText;
-    
-    
+
+    public WebSource(String source, String webPageURL, String rssURL) {
+        this.source = source;
+        this.webPageURL = webPageURL;
+        this.rssURL = rssURL;
+        this.rssText = new LinkedList<String>();
+        this.pdfDocs = new LinkedList<File>();
+        this.webText = new LinkedList<String>();
+    }
+
+    public String getWebPageURL() {
+        return webPageURL;
+    }
+
+    public void setWebPageURL(String webPageURL) {
+        this.webPageURL = webPageURL;
+    }
+
+    public String getRssURL() {
+        return rssURL;
+    }
+
+    public void setRssURL(String rssURL) {
+        this.rssURL = rssURL;
+    }
+
+    public LinkedList<String> getRssText() {
+        return rssText;
+    }
+
+    public void setRssText(LinkedList<String> rssText) {
+        this.rssText = rssText;
+    }
+
+    public LinkedList<File> getPdfDocs() {
+        return pdfDocs;
+    }
+
+    public void setPdfDocs(LinkedList<File> pdfDocs) {
+        this.pdfDocs = pdfDocs;
+    }
+
+    public LinkedList<String> getWebText() {
+        return webText;
+    }
+
+    public void setWebText(LinkedList<String> webText) {
+        this.webText = webText;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
     
 }

@@ -31,7 +31,6 @@ public class HTMLReader {
     private BufferedWriter bw;
     private Document doc;
     private String pageText;
-    private Comparitor c = new Comparitor();
     private int urlID;
 
     public HTMLReader() throws Exception {
@@ -92,7 +91,7 @@ public class HTMLReader {
             bw.write(text);
             bw.close();
 
-            boolean equal = c.compareChecksums(file1, file2, 0);
+            boolean equal = Comparitor.compareChecksums(file1, file2, 0);
 
             if (!equal) {
                 stat.execute("INSERT INTO html (text,UrlId)"
