@@ -12,7 +12,7 @@ import java.util.LinkedList;
  * 
  * @author StephenJohnRussell
  */
-public interface Comparitor {
+public interface Comparator {
     
     /**
      * MD5 Checksum digestType
@@ -42,13 +42,22 @@ public interface Comparitor {
     public boolean compareChecksums(File pdfA, File pdfB, int digestType);
     
     /**
-     * Returns a list of differences between strings.
+     * Returns a list of differences between PDF documents.
      * 
      * @param textA
      * @param textB
      * @return 
      */
-    public LinkedList<String> diffText(String textA, String textB);
+    public LinkedList<String> diffFiles(File fileA, File fileB);
+    
+    /**
+     * Returns a list of differences between tow texts.
+     * 
+     * @param textA
+     * @param textB
+     * @return 
+     */
+    public LinkedList<String> diffText(String oldText, String newText);
     
     /**
      * Returns a double array of three values:

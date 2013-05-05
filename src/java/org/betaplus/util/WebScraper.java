@@ -9,7 +9,8 @@ import java.io.File;
 import java.util.LinkedList;
 
 /**
- * Interface defining the tasks associated with retrieving data from given sources
+ * Interface defining the tasks associated with retrieving data from given  web
+ * sources.
  * @author StephenJohnRussell
  */
 public interface WebScraper {

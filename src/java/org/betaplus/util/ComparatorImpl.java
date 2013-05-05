@@ -19,23 +19,12 @@ import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.betaplus.testcases.DiffMatchPatch;
-import org.betaplus.testcases.DiffMatchPatch.Diff;
 
 /**
- * Class implementing ToolBoxInterface to provide PDF comparison.
- * Provides: ?-Checksum comparison. ?-Text comparison. ?-% of document changed.
  *
- * @author Stephen John Russell
- * @date 07-Feb-2013
- * @version 0.1
+ * @author StephenJohnRussell
  */
-public class ToolBox implements ToolBoxInterface {
-
-    /**
-     * Default constructor.
-     */
-    public ToolBox() {
-    }
+public class ComparatorImpl implements Comparator {
 
     /**
      * Generate checksums for files a & b with digestType and compare.
@@ -45,6 +34,7 @@ public class ToolBox implements ToolBoxInterface {
      * @param digestType
      * @return
      */
+    @Override
     public boolean compareChecksums(File fileA, File fileB, int digestType) {
         //InputStreams for checksum generation
         InputStream isA = null;
@@ -61,82 +51,46 @@ public class ToolBox implements ToolBoxInterface {
             String digestB = checkSums[1];
             tf = digestA.equals(digestB);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ToolBox.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Comparator.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 //Close streams
                 isA.close();
                 isB.close();
             } catch (IOException ex) {
-                Logger.getLogger(ToolBox.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Comparator.class.getName()).log(Level.INFO, null, ex);
             }
             //Final comparison
             return tf;
         }
     }
 
-    /**
-     * Generate checksums.
-     *
-     * @param isA
-     * @param isB
-     * @param type
-     * @return
-     * @throws IOException
-     */
-    private static String[] getChecksums(InputStream isA, InputStream isB, int type)
-            throws IOException {
-        //Strings to hold checksums
-        String checkSumA;
-        String checkSumB;
-        if (type == 0) {        // 0 == MD5
-            checkSumA = org.apache.commons.codec.digest.DigestUtils.md5Hex(isA);
-            checkSumB = org.apache.commons.codec.digest.DigestUtils.md5Hex(isB);
-        } else if (type == 1) { // 1 == SHA-1
-            checkSumA = org.apache.commons.codec.digest.DigestUtils.sha1Hex(isA);
-            checkSumB = org.apache.commons.codec.digest.DigestUtils.sha1Hex(isB);
-        } else {                // 2 == SHA-512
-            checkSumA = org.apache.commons.codec.digest.DigestUtils.sha512Hex(isA);
-            checkSumB = org.apache.commons.codec.digest.DigestUtils.sha512Hex(isB);
-        }
-        //Construct array
-        String[] checkSums = {checkSumA, checkSumB};
-        return checkSums;
-    }
-
-    /**
-     * For each line separated by "\n" in new doc if it does not exist in new
-     * doc, add to list.
-     *
-     * @param oldVersion
-     * @param newVersion
-     * @return
-     */
-    public static LinkedList<String> getDifference(File oldVersion, File newVersion) {
+    @Override
+    public LinkedList<String> diffFiles(File oldVersion, File newVersion) {
         //The list to return
         LinkedList<String> diff = new LinkedList<String>();
-        //Recover text
-
+        //Recover text from PDF.
         String pdfA = pdftoText(oldVersion);
         String pdfB = pdftoText(newVersion);
         //Googles diff_match_patch
         DiffMatchPatch differ = new DiffMatchPatch();
         //The list of diffs
-        LinkedList<Diff> l = differ.diff_main(pdfA, pdfB);
+        LinkedList<DiffMatchPatch.Diff> l = differ.diff_main(pdfA, pdfB);
         //Convert diffs to string
-        for (Diff d : l) {
+        for (DiffMatchPatch.Diff d : l) {
             diff.add(d.toString());
         }
         return diff;
     }
 
     /**
-     * Extract text from PDF Document.
+     * Extract text from PDF Document or return text if file not a pdf.
      *
      * @param f
      * @return
      */
     private static String pdftoText(File f) {
+        boolean notPDF = false;
         //Document parser
         PDFParser parser;
         //The text to return
@@ -157,28 +111,50 @@ public class ToolBox implements ToolBoxInterface {
             //pdfStripper.setLineSeparator("\n");
             parsedText = pdfStripper.getText(pdDoc);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ToolBox.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Comparator.class.getName()).log(Level.SEVERE, null, ex);
+            notPDF = true;            
         } catch (IOException ex) {
-            Logger.getLogger(ToolBox.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Comparator.class.getName()).log(Level.SEVERE, null, ex);
+            notPDF = true;
         } finally {
             //Close open documents.
             if (cosDoc != null) {
                 try {
                     cosDoc.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(ToolBox.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Comparator.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             if (pdDoc != null) {
                 try {
                     pdDoc.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(ToolBox.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Comparator.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+            if (notPDF) {
+                
             }
         }
         return parsedText;
     }
+
+    @Override
+    public LinkedList<String> diffText(String oldText, String newText) {
+        //The list to return
+        LinkedList<String> diff = new LinkedList<String>();
+        //Googles diff_match_patch
+        DiffMatchPatch differ = new DiffMatchPatch();
+        //The list of diffs
+        LinkedList<DiffMatchPatch.Diff> l = differ.diff_main(oldText, newText);
+        //Convert diffs to string
+        for (DiffMatchPatch.Diff d : l) {
+            diff.add(d.toString());
+        }
+        return diff;
+    }
+
+    
 
     /**
      * Return an integer percentage indicating the amount of text removed from a
@@ -187,6 +163,7 @@ public class ToolBox implements ToolBoxInterface {
      * @param diff
      * @return
      */
+    @Override
     public double[] percentageChanged(LinkedList<String> diff) {
 
         //The values to return.
@@ -222,66 +199,34 @@ public class ToolBox implements ToolBoxInterface {
         return changes;
     }
 
+    
     /**
-     * Download all PDF's from a given URL.
+     * Generate checksums and return a String[].
      *
-     * @param url
+     * @param isA
+     * @param isB
+     * @param type
      * @return
-     *
-     * public static LinkedList<File> downloadPDFS(String url, String name) {
-     * LinkedList<File> pdfs = new LinkedList<File>(); try { URL host = new
-     * URL(url); Document doc = Jsoup.parse(host, 100000); Elements els =
-     * doc.body().select("a[href]"); int c = 0; for(Element e : els) { String
-     * absUrl = e.absUrl("href"); System.out.println(absUrl); if
-     * (absUrl.contains("file") || absUrl.contains(".pdf")) { int len =
-     * absUrl.length(); File f = new File(downloadFile(absUrl, name +
-     * absUrl.substring(len - 18, len))); pdfs.add(f); } }
-     * System.out.println("SIZE:" + pdfs.size()); } catch (IOException ex) {
-     * Logger.getLogger(ToolBox.class.getName()).log(Level.SEVERE, null, ex);
-     * }      *
-     * return pdfs;
-    }
+     * @throws IOException
      */
-    /**
-     * Downloads a single file from a given URL.
-     *
-     * @throws IOException ,MalformedURLException
-     */
-    public static boolean downloadFile(URL url, String folderID, String name) {
-        try {
-            String directory;
-            //Get a connection to the URL and start up a buffered reader.
-            url.openConnection();
-            InputStream reader = url.openStream();
-            if(folderID.equals("pdf")) {
-                directory = folderID;
-            }
-            else {
-                directory = "pdf/" + folderID;
-            }
-            
-            //Setup a buffered file writer to write out what is read from URL.
-            FileOutputStream writer = new FileOutputStream(directory + "/" + name + ".pdf");
-
-            byte[] buffer = new byte[153600];
-            int bytesRead;
-            while ((bytesRead = reader.read(buffer)) > 0) {
-                writer.write(buffer, 0, bytesRead);
-                buffer = new byte[153600];
-            }
-            writer.close();
-            reader.close();
-            return true;
-        } catch (IOException ex) {
-            System.out.println("File Not Found...");
-            return false;
+    private static String[] getChecksums(InputStream isA, InputStream isB, int type)
+            throws IOException {
+        //Strings to hold checksums
+        String checkSumA;
+        String checkSumB;
+        if (type == 0) {        // 0 == MD5
+            checkSumA = org.apache.commons.codec.digest.DigestUtils.md5Hex(isA);
+            checkSumB = org.apache.commons.codec.digest.DigestUtils.md5Hex(isB);
+        } else if (type == 1) { // 1 == SHA-1
+            checkSumA = org.apache.commons.codec.digest.DigestUtils.sha1Hex(isA);
+            checkSumB = org.apache.commons.codec.digest.DigestUtils.sha1Hex(isB);
+        } else {                // 2 == SHA-512
+            checkSumA = org.apache.commons.codec.digest.DigestUtils.sha512Hex(isA);
+            checkSumB = org.apache.commons.codec.digest.DigestUtils.sha512Hex(isB);
         }
+        //Construct array
+        String[] checkSums = {checkSumA, checkSumB};
+        return checkSums;
     }
-
-    @Override
-    public String getTextFromPDF(File pdf) {
-        return "";
-        //throw new UnsupportedOperationException("Not supported yet.");
-    }
-
+    
 }
