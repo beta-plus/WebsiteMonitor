@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 /**
  * Interface defining the tasks associated with retrieving data from given  web
- * sources.
+ * sources. 
  * @author StephenJohnRussell
  */
 public interface WebScraper {
@@ -62,7 +62,7 @@ public interface WebScraper {
      * @return 
      */
     public LinkedList<File> getPDFsFromUrl(String url, String dataSource, 
-            String[] keyWords);
+            LinkedList<String> keyWords);
     
     
 }

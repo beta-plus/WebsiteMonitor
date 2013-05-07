@@ -19,7 +19,9 @@ public class WebsiteMonitor {
 
     public static void main(String args[]) {
 
-        String[] keyWords = {"file_provider", "pdf"};
+        LinkedList<String> keyWords = new LinkedList<String>();
+        keyWords.add("file_provider");
+        keyWords.add("pdf");
         String[] urls = {"http://www.lga.org.mt/lga/content.aspx?id=92272", "http://www.gov.im/gambling/regulatory.xml", "http://regulations.porezna-uprava.hr/"};
         String[] sources = {"http://www.lga.org.mt/lga/content.", "gov.im", "-uprava"};
 
@@ -29,7 +31,7 @@ public class WebsiteMonitor {
         ComparatorImpl compare = new ComparatorImpl();
 
         for (int i = 0; i < 1; i++) {
-            dataSources.add(new WebSource(sources[i], urls[i], null));
+            dataSources.add(new WebSource(sources[i], urls[i], null, keyWords));
         }
 
         for (WebSource ws : dataSources) {
@@ -89,4 +91,5 @@ public class WebsiteMonitor {
             System.out.println("*********************************************");
         }
     }
+    
 }

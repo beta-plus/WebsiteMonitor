@@ -21,14 +21,23 @@ public class WebSource {
     private LinkedList<String> rssText;
     private LinkedList<File> pdfDocs;
     private LinkedList<String> webText;
+    private LinkedList<String> keyWords;
 
-    public WebSource(String source, String webPageURL, String rssURL) {
+    public WebSource(String source, String webPageURL, String rssURL, LinkedList<String> keyWords) {
         this.source = source;
         this.webPageURL = webPageURL;
         this.rssURL = rssURL;
-        this.rssText = new LinkedList<String>();
-        this.pdfDocs = new LinkedList<File>();
-        this.webText = new LinkedList<String>();
+        this.keyWords = keyWords;
+    }
+
+    
+
+    public LinkedList<String> getKeyWords() {
+        return keyWords;
+    }
+
+    public void setKeyWords(LinkedList<String> keyWords) {
+        this.keyWords = keyWords;
     }
 
     public String getWebPageURL() {

@@ -64,8 +64,8 @@ public class WebScraperImpl implements WebScraper {
      * domain key word that will stop the search from leaving the current
      * domain.
      *
-     * Example: getTextFromUrl("http://www.foo.com/index", foo); Example:
-     * getTextFromUrl("http://www.foo.blog.com/index", foo.blog);
+     * Example: getTextFromRss("http://www.foo.com/index", foo); 
+     * Example: getTextFromRss("http://www.foo.blog.com/index", foo.blog);
      *
      * @param url
      * @return
@@ -101,7 +101,7 @@ public class WebScraperImpl implements WebScraper {
      */
     @Override
     public LinkedList<File> getPDFsFromUrl(String url, String dataSource,
-            String[] keyWords) {
+            LinkedList<String> keyWords) {
         //The list of pdf's.
         LinkedList<File> l = new LinkedList<File>();
         try {
@@ -195,7 +195,7 @@ public class WebScraperImpl implements WebScraper {
      * @return
      * @throws Exception
      */
-    private LinkedList<File> extractPDFLinks(Document doc, String[] keyWords, LinkedList<File> lf) throws Exception {
+    private LinkedList<File> extractPDFLinks(Document doc, LinkedList<String> keyWords, LinkedList<File> lf) throws Exception {
         //A list of urls used to gether links.
         LinkedList<String> ol = new LinkedList<String>();
         //A list of every link without prejudice.
