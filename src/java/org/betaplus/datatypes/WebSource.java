@@ -4,9 +4,6 @@
  */
 package org.betaplus.datatypes;
 
-import java.io.File;
-import java.util.LinkedList;
-
 /**
  * Class defining data held on a given web source.
  * 
@@ -18,26 +15,13 @@ public class WebSource {
     private String source;
     private String webPageURL;
     private String rssURL;
-    private LinkedList<String> rssText;
-    private LinkedList<File> pdfDocs;
-    private LinkedList<String> webText;
-    private LinkedList<String> keyWords;
+    private int sourceID;
 
-    public WebSource(String source, String webPageURL, String rssURL, LinkedList<String> keyWords) {
+    public WebSource(String source, String webPageURL, String rssURL, int sourceID) {
         this.source = source;
         this.webPageURL = webPageURL;
         this.rssURL = rssURL;
-        this.keyWords = keyWords;
-    }
-
-    
-
-    public LinkedList<String> getKeyWords() {
-        return keyWords;
-    }
-
-    public void setKeyWords(LinkedList<String> keyWords) {
-        this.keyWords = keyWords;
+        this.sourceID = sourceID;
     }
 
     public String getWebPageURL() {
@@ -55,37 +39,21 @@ public class WebSource {
     public void setRssURL(String rssURL) {
         this.rssURL = rssURL;
     }
-
-    public LinkedList<String> getRssText() {
-        return rssText;
-    }
-
-    public void setRssText(LinkedList<String> rssText) {
-        this.rssText = rssText;
-    }
-
-    public LinkedList<File> getPdfDocs() {
-        return pdfDocs;
-    }
-
-    public void setPdfDocs(LinkedList<File> pdfDocs) {
-        this.pdfDocs = pdfDocs;
-    }
-
-    public LinkedList<String> getWebText() {
-        return webText;
-    }
-
-    public void setWebText(LinkedList<String> webText) {
-        this.webText = webText;
-    }
-
+    
     public String getSource() {
         return source;
     }
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public int getSourceID() {
+        return sourceID;
+    }
+
+    public void setSourceID(int sourceID) {
+        this.sourceID = sourceID;
     }
     
 }

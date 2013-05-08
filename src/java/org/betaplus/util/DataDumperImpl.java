@@ -36,46 +36,25 @@ public class DataDumperImpl implements DataDumper {
     Statement stat;
 
     public static void main(String[] args) {
-        FileInputStream is = null;
+
         DatabaseGenerator g = new DatabaseGenerator();
-        System.out.println("\n\n" +
-                  "========================================================\n"
+        System.out.println("\n"
+                + "========================================================\n"
                 + "********************************************************\n"
                 + "***********TESTING DATA DUMPER METHODS *****************\n"
-                + "========================================================\n"
-                + "********************************************************\n");
-        try {
-            DataDumper dd = new DataDumperImpl();
-            WebSource ws = new WebSource("http://www.lga.org.mt/lga/content.", "http://www.lga.org.mt/lga/content.aspx?id=92272", "", new LinkedList<String>());
-            LinkedList<String> wc = new LinkedList<String>();
-            for (int i = 0; i < 10; i++) {
-                wc.add("Content " + i);
-            }
-            File pdf = new File("/Users/StephenJohnRussell/NetBeansProjects/PDFUtility/document_635005030191227226.pdf");
-            is = new FileInputStream(pdf);
-            boolean test = dd.dumpWebSource(ws);
-            boolean test2 = dd.dumpUser(new User("Stephen Russell", "stephenjohnrussell@me.com"));
-            boolean test3 = dd.dumpWebText(new WebText(wc, "Content Test", ws));
-            boolean test4 = dd.dumpKeyWord(new KeyWord("file_provider", ws));
-            boolean test5 = dd.dumpKeyWord(new KeyWord("pdf", ws));
-            boolean test6 = dd.dumpPDF(new Pdf(DigestUtils.md5Hex(is), "LGA633570702574217500", pdf, ws));
-            System.out.println("Test Add WebSoource \t:" + test);
-            System.out.println("Test Add User \t\t:" + test2);
-            System.out.println("Test Add WebText \t:" + test3);
-            System.out.println("Test Add Key Word \t:" + test4);
-            System.out.println("Test Add Key Word \t:" + test5);
-            System.out.println("Test Add Pdf \t\t:" + test6);
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(DataDumperImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(DataDumperImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                is.close();
-            } catch (IOException ex) {
-                Logger.getLogger(DataDumperImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                + "********************************************************\n"
+                + "========================================================\n");
+
+        DataDumper dd = new DataDumperImpl();
+        String[] urls = {"http://www.lga.org.mt/lga/content.aspx?id=92272", "http://www.gov.im/gambling/regulatory.xml", "http://regulations.porezna-uprava.hr/"};
+        String[] sources = {"http://www.lga.org.mt/lga/content", "http://www.gov.im/gambling/", "http://regulations.porezna-uprava.hr/"};
+        for (int i = 0; i < urls.length; i++) {
+            WebSource ws = new WebSource(sources[i], urls[i], null, i);
+            dd.dumpWebSource(ws);
+            if (i == 0) {
+                dd.dumpKeyWord(new KeyWord("file_provider", ws));
+            }            
+            dd.dumpKeyWord(new KeyWord("pdf", ws));
         }
     }
 
@@ -157,6 +136,11 @@ public class DataDumperImpl implements DataDumper {
                 urlId = r.getString("Url_Id");
             }
             for (String s : webText.getPageContent()) {
+                for (int i = 0; i < s.length(); i++) {
+                    if (s.charAt(i) == '\'') {
+                        s = s.substring(0, i-1) + "\\" + s.substring(i);
+                    }
+                }
                 PreparedStatement statement = conn.prepareStatement("INSERT INTO Html (Html_Content, Html_Name, Url_Id) "
                         + "VALUES ('" + s + "', '" + webText.getPageTitle()
                         + "', '" + urlId + "')");
