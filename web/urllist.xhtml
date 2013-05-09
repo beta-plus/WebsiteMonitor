@@ -26,6 +26,7 @@
                     if (trs[i] == tr) {
                         document.form.rowIndex.value = trs[i].rowIndex;
                         document.getElementById('form:updateEdit').click();
+                        window.open("keywords.xhtml","_blank","resizable=no, width=800, height=500");
                     }                    
                 }
             }
@@ -50,24 +51,34 @@
                 </div>
             </div>
             <div id="editrecord">
-                <h:form>
-                    <h:panelGrid columns="3" width="100%">
-                        <h:outputText value="UrlID" />
-                        <h:outputText value="Url" />
-                        <h:outputText value="Type" />
+                <fieldset style="border: 1px black solid">
+                    <legend style="margin-left: 1em; padding: 0.2em 0.8em ">Add/Update/Delete Url</legend>
+                    <h:form>
+                        <h:panelGrid columns="4" width="100%" style="text-align: center">
+                            <h:outputText value="Url Id" />
+                            <h:outputText value="Rss Url" />
+                            <h:outputText value="Http Url" />
+                            <h:outputText value="Url Name" />
 
-                        <h:outputText value="#{urlListBean.dataItem.urlID}" />
-                        <h:inputText id="url" value="#{urlListBean.dataItem.url}" />
-                        <h:inputText id="type" value="#{urlListBean.dataItem.type}" />
-                    </h:panelGrid>
-                    <h:inputHidden binding="#{urlListBean.dataItemId}" />
-                    <h:commandButton value="Update" action="#{urlListBean.updateDataItem}" />
-                    <h:commandButton value="Delete" action="#{urlListBean.deleteSelectedItems}" />
-                    <h:commandButton value="New" action="#{urlListBean.newDataItem}" />
-                    <h:commandButton value="Clear" action="#{urlListBean.clearDataItem()}"/>
-                </h:form>
+                            <h:outputText value="#{urlListBean.dataItem.urlID}" />
+                            <h:inputText id="rssUrl" value="#{urlListBean.dataItem.rssUrl}" />
+                            <h:inputText id="httpUrl" value="#{urlListBean.dataItem.httpUrl}" />
+                            <h:inputText id="urlName" value="#{urlListBean.dataItem.urlName}" />
+
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%" style="text-align: center; 
+                                     border-top: 1px solid #000; margin-top: 10px; padding-top: 5px">
+                            <h:commandButton value="Update" action="#{urlListBean.updateDataItem}" />
+                            <h:commandButton value="Delete" action="#{urlListBean.deleteSelectedItems}" />
+                            <h:commandButton value="New" action="#{urlListBean.newDataItem}" />
+                            <h:commandButton value="Clear" action="#{urlListBean.clearDataItem()}"/>
+                        </h:panelGrid>
+                        <h:inputHidden binding="#{urlListBean.dataItemId}" />
+                    </h:form>
+                </fieldset>
             </div>
-            <div id="contentbody">
+            <div id="contentbody" style="text-align: center;">
                 <h:form id="form">
                     <h:dataTable id="dataTable" styleClass="view-table"
                                  headerClass="view-table-header"
@@ -78,23 +89,30 @@
 
                         <h:column>
                             <f:facet name="header">
-                                URL ID
+                                Url Id
                             </f:facet>
                             #{dataItem.urlID}
                         </h:column>
 
                         <h:column>
                             <f:facet name="header">
-                                URL
+                                Rss Url
                             </f:facet>
-                            #{dataItem.url}
+                            #{dataItem.rssUrl}
                         </h:column>
 
                         <h:column>
                             <f:facet name="header">
-                                Type
+                                Http Url
                             </f:facet>
-                            #{dataItem.type}
+                            #{dataItem.httpUrl}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                Url Name
+                            </f:facet>
+                            #{dataItem.urlName}
                         </h:column>
 
                     </h:dataTable>  
@@ -102,10 +120,11 @@
                     <h:commandLink id="updateEdit" type="hidden" 
                                    immediate="true" action="#{urlListBean.selectDataItem()}"/> 
                 </h:form>
+                <h:outputText value="Page #{urlListBean.getCurrentPage()}/#{urlListBean.getTotalPages()} "/>
             </div>
             <div id="navbtn">
                 <h:form>
-                    <h:panelGrid columns="4" width="100%">
+                    <h:panelGrid columns="4" width="100%" style="text-align: center">
                         <h:commandButton value="first" 
                                          action="#{urlListBean.pageFirst}"
                                          disabled="#{urlListBean.dataTable.first == 0}" />

@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.betaplus.beans;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -12,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.component.html.HtmlInputHidden;
 import javax.faces.context.FacesContext;
@@ -29,96 +23,86 @@ public class RssBean {
     private Connection conn;
     private Statement stat;
     private HtmlDataTable dataTable;
-    private List<RSSData> changesList = new LinkedList();
-    private List<RSSData> latestList = new LinkedList();
+    private List<RSSData> dataList = new LinkedList();
     private HtmlInputHidden dataItemId = new HtmlInputHidden();
     private RSSData dataItem = new RSSData();
     
-    private void loadChangesList() throws Exception {
+    /**
+     * Create a linked list containing all the data from the rss table
+     * of the database and the url associated with it starting from the most recent, 
+     * sorted by the download date in descending order
+     * @throws Exception 
+     */
+    private void loadDataList() throws Exception {
         getConnection();
-        changesList.clear();
-        ResultSet rs = stat.executeQuery("SELECT rss.*, urls.Url, urls.Type "
-                + "FROM rss, urls WHERE rss.UrlId=urls.UrlId ORDER BY DlDate DESC");
+        dataList.clear();
+        ResultSet rs = stat.executeQuery("SELECT rss.*, urls.Rss_Url "
+                + "FROM rss, urls WHERE rss.Url_Id=urls.Url_Id "
+                + "ORDER BY Dl_Date DESC");
         while(rs.next()) { 
             RSSData rss = new RSSData();
-            rss.setRssID(rs.getString(1));
-            rss.setFeedTitle(rs.getString(2));
-            rss.setFeedDes(rs.getString(3));
-            rss.setLinkTitle(rs.getString(4));
-            rss.setLinkDes(rs.getString(5));
-            rss.setLinkPubDate(rs.getString(6));
-            rss.setLinkLink(rs.getString(7));
-            rss.setDlDate(rs.getString(8).substring(0, 10));
-            rss.setUrlID(rs.getString(9));
-            rss.setUrl(rs.getString(10));
-            rss.setType(rs.getString(11));
-            changesList.add(rss);
+            rss.setRssID(rs.getString("Rss_Id"));
+            rss.setFeedTitle(rs.getString("Feed_Title"));
+            rss.setFeedDes(rs.getString("Feed_Des"));
+            rss.setLinkTitle(rs.getString("Link_Title"));
+            rss.setLinkDes(rs.getString("Link_Des"));
+            rss.setLinkPubDate(rs.getString("Link_Pub_Date"));
+            rss.setLinkLink(rs.getString("Link_Link"));
+            rss.setDlDate(rs.getString("Dl_Date").substring(0, 10));
+            rss.setUrlID(rs.getString("Url_Id"));
+            rss.setUrl(rs.getString("Rss_Url"));
+            dataList.add(rss);
         }
     }
     
-    private void loadLatestList() throws Exception {
-        getConnection();
-        latestList.clear();
-        ResultSet rs = stat.executeQuery("SELECT rss.*, urls.Url, urls.Type "
-                + "FROM rss, urls WHERE rss.UrlId=urls.UrlId GROUP BY rss.UrlId");
-        while(rs.next()) { 
-            RSSData rss = new RSSData();
-            rss.setRssID(rs.getString(1));
-            rss.setFeedTitle(rs.getString(2));
-            rss.setFeedDes(rs.getString(3));
-            rss.setLinkTitle(rs.getString(4));
-            rss.setLinkDes(rs.getString(5));
-            rss.setLinkPubDate(rs.getString(6));
-            rss.setLinkLink(rs.getString(7));
-            rss.setDlDate(rs.getString(8).substring(0, 10));
-            rss.setUrlID(rs.getString(9));
-            rss.setUrl(rs.getString(10));
-            rss.setType(rs.getString(11));
-            latestList.add(rss);
-        }
-    }
-    
-    public void selectChange() {
+    /**
+     * Save the details of rss object when it is selected in the UI datatable
+     */
+    public void selectDataItem() {
         // Obtain the row index from the hidden input element.
         String rowIndex = FacesContext.getCurrentInstance().getExternalContext()
             .getRequestParameterMap().get("rowIndex");
         if (rowIndex != null && rowIndex.trim().length() != 0) {
             int curIndex = dataTable.getFirst() + Integer.parseInt(rowIndex);
-            dataItem = changesList.get(curIndex-1);
+            dataItem = dataList.get(curIndex-1);
             dataItemId.setValue(dataItem.getRssID());
         }
     }
     
-    public void selectDocument() {
-        // Obtain the row index from the hidden input element.
-        String rowIndex = FacesContext.getCurrentInstance().getExternalContext()
-            .getRequestParameterMap().get("rowIndex");
-        if (rowIndex != null && rowIndex.trim().length() != 0) {
-            int curIndex = dataTable.getFirst() + Integer.parseInt(rowIndex);
-            dataItem = latestList.get(curIndex-1);
-            dataItemId.setValue(dataItem.getRssID());
-        }
-    }
-    
-    // Navigation Methods ------------------------------------------------------
+    /**
+     * Navigate to the front page of the datatable in the UI
+     */
     public void pageFirst() {
         dataTable.setFirst(0);
     }
 
+    /**
+     * Navigate to the previous page of the datatable in the UI
+     */
     public void pagePrevious() {
         dataTable.setFirst(dataTable.getFirst() - dataTable.getRows());
     }
 
+    /**
+     * Navigate to the next page of the datatable in the UI
+     */
     public void pageNext() {
         dataTable.setFirst(dataTable.getFirst() + dataTable.getRows());
     }
 
+    /**
+     * Navigate to the last page of the datatable in the UI
+     */
     public void pageLast() {
         int count = dataTable.getRowCount();
         int rows = dataTable.getRows();
         dataTable.setFirst(count - ((count % rows != 0) ? count % rows : rows));
     }
     
+    /**
+     * Get the current page of the datatable in the UI
+     * @return 
+     */
     public int getCurrentPage() {
         int rows = dataTable.getRows();
         int first = dataTable.getFirst();
@@ -126,36 +110,54 @@ public class RssBean {
         return (count / rows) - ((count - first) / rows) + 1;
     }
 
+    /**
+     * Get the total pages of the datatable in the UI
+     * @return 
+     */
     public int getTotalPages() {
         int rows = dataTable.getRows();
         int count = dataTable.getRowCount();
         return (count / rows) + ((count % rows != 0) ? 1 : 0);
     }
     
-    // Getter Methods ----------------------------------------------------------
-    public List<RSSData> getChangesList() throws Exception {
-        loadChangesList();
-        return changesList;
+    /**
+     * Get the list of rss objects from the database
+     * @return
+     * @throws Exception 
+     */
+    public List<RSSData> getDataList() throws Exception {
+        loadDataList();
+        return dataList;
     }
     
-    public List<RSSData> getLatestList() throws Exception {
-        loadLatestList();
-        return latestList;
-    }
-    
+    /**
+     * Get the html datatable
+     * @return 
+     */
     public HtmlDataTable getDataTable() {
         return dataTable;
     }
     
+    /**
+     * Get the chosen rss data object
+     * @return 
+     */
     public RSSData getDataItem() {
         return dataItem;
     }
     
+    /**
+     * Get the ID of the chosen rss data object
+     * @return 
+     */
     public HtmlInputHidden getDataItemId() {
         return dataItemId;
     }
     
-    // Setter Methods ----------------------------------------------------------
+    /**
+     * Set the html datatable
+     * @param dataTable 
+     */
     public void setDataTable(HtmlDataTable dataTable) {
         this.dataTable = dataTable;
     }

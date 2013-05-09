@@ -124,13 +124,13 @@
                         <div id="temp">
                             <h:panelGrid rendered="#{changeBean.type == 'pdf'}">
                                 <object width="850" height="500"
-                                        data="#{pdfBean.dataItem.url}" id="docviewerContent">
+                                        data="#{pdfBean.dataItem.pdfUrl}" id="docviewerContent">
                                     <p>Object can not be displayed!</p>
                                 </object>
                             </h:panelGrid>
                             <h:panelGrid rendered="#{changeBean.type == 'html'}">
                                 <object width="850" height="500"
-                                        data="#{htmlBean.dataItem.url}" id="docviewerContent">
+                                        data="#{htmlBean.dataItem.htmlUrl}" id="docviewerContent">
                                     <p>Object can not be displayed!</p>
                                 </object>
                             </h:panelGrid>
@@ -140,184 +140,187 @@
                                     <p>Object can not be displayed!</p>
                                 </object>
                             </h:panelGrid>
-                            
+
                         </div>
                     </div>
                 </div>
                 <div id="recent">
                     <div class="tabArea">
-                       <a class="tab" onclick="pdfInner()" target="myIframe">PDF</a>
-                       <a class="tab" onclick="htmlInner()" target="myIframe">HTML</a>
-                       <a class="tab" onclick="rssInner()" target="myIframe">RSS</a>
-                   </div>
-                   <div class="tabMain">
-                       <div class="tabIframeWrapper">
-                       <div id="tabContent">
-                           <div id="pdfHide" style="display:none;">
-                               <div id="tablediv">
-            <h:form id="pdfForm">
-                <h:dataTable id="dataTable"
-                             styleClass="view-table"
-                             headerClass="view-table-header"
-                             rowClasses="view-table-odd-row,view-table-even-row"
-                             binding="#{pdfBean.dataTable}" 
-                             value="#{pdfBean.latestList}" 
-                             var="dataItem" rows="18">
+                        <a class="tab" onclick="pdfInner()" target="myIframe">PDF</a>
+                        <a class="tab" onclick="htmlInner()" target="myIframe">HTML</a>
+                        <a class="tab" onclick="rssInner()" target="myIframe">RSS</a>
+                    </div>
+                    <div class="tabMain">
+                        <div class="tabIframeWrapper">
+                            <div id="tabContent">
+                                <div id="pdfHide" style="display:none; text-align: center;">
+                                    <div id="tablediv">
+                                        <h:form id="pdfForm">
+                                            <h:dataTable id="dataTable"
+                                                         styleClass="view-table"
+                                                         headerClass="view-table-header"
+                                                         rowClasses="view-table-odd-row,view-table-even-row"
+                                                         binding="#{pdfBean.dataTable}" 
+                                                         value="#{pdfBean.dataList}" 
+                                                         var="dataItem" rows="15">
 
-                    <h:column>
-                        <f:facet name="header">
-                            PDF Name
-                        </f:facet>
-                        #{dataItem.pdfName}
-                    </h:column>
+                                                <h:column>
+                                                    <f:facet name="header">
+                                                        Url Id
+                                                    </f:facet>
+                                                    #{dataItem.urlID}
+                                                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            Date
-                        </f:facet>
-                        #{dataItem.dlDate}
-                    </h:column>
+                                                <h:column>
+                                                    <f:facet name="header">
+                                                        PDF Name
+                                                    </f:facet>
+                                                    #{dataItem.pdfName}
+                                                </h:column>
 
-                </h:dataTable>
-                <input type="hidden" name="rowIndex" />
-                    <h:commandLink id="updateEdit" type="hidden" 
-                                   immediate="true" action="#{pdfBean.selectDocument()}">
-                        <f:actionListener binding="#{changeBean.setType('pdf')}"/>
-                    </h:commandLink>
-            </h:form>
-        </div>
-        <div id="navbtn">
-            <h:form>
-                <h:panelGrid columns="4" width="100%">
-                    <h:commandButton value="first" 
-                                     action="#{pdfBean.pageFirst}"
-                                     disabled="#{pdfBean.dataTable.first == 0}" />
-                    <h:commandButton value="prev" 
-                                     action="#{pdfBean.pagePrevious}"
-                                     disabled="#{pdfBean.dataTable.first == 0}" />
-                    <h:commandButton value="next" 
-                                     action="#{pdfBean.pageNext}"
-                                     disabled="#{pdfBean.dataTable.first + pdfBean.dataTable.rows
-                                                 >= pdfBean.dataTable.rowCount}" />
-                    <h:commandButton value="last" 
-                                     action="#{pdfBean.pageLast}"
-                                     disabled="#{pdfBean.dataTable.first + pdfBean.dataTable.rows
-                                                 >= pdfBean.dataTable.rowCount}" />
-                </h:panelGrid>
-            </h:form>            
-        </div>
-                           </div>
-                           <div id="htmlHide" style="display:none;">
-                              <div id="tablediv">
-            <h:form id="htmlForm">
-                <h:dataTable id="dataTable"
-                    styleClass="view-table"
-                             headerClass="view-table-header"
-                             rowClasses="view-table-odd-row,view-table-even-row"
-                             binding="#{htmlBean.dataTable}" 
-                             value="#{htmlBean.latestList}" 
-                             var="dataItem" rows="18">
+                                            </h:dataTable>
+                                            <input type="hidden" name="rowIndex" />
+                                            <h:commandLink id="updateEdit" type="hidden" 
+                                                           immediate="true" action="#{pdfBean.selectDataItem()}">
+                                                <f:actionListener binding="#{changeBean.setType('pdf')}"/>
+                                            </h:commandLink>
+                                        </h:form>
+                                    </div>
+                                    <h:outputText value="Page #{pdfBean.getCurrentPage()}/#{pdfBean.getTotalPages()} "/>
+                                    <div id="navbtn">
+                                        <h:form>
+                                            <h:panelGrid columns="4" width="100%">
+                                                <h:commandButton value="first" 
+                                                                 action="#{pdfBean.pageFirst}"
+                                                                 disabled="#{pdfBean.dataTable.first == 0}" />
+                                                <h:commandButton value="prev" 
+                                                                 action="#{pdfBean.pagePrevious}"
+                                                                 disabled="#{pdfBean.dataTable.first == 0}" />
+                                                <h:commandButton value="next" 
+                                                                 action="#{pdfBean.pageNext}"
+                                                                 disabled="#{pdfBean.dataTable.first + pdfBean.dataTable.rows
+                                                                             >= pdfBean.dataTable.rowCount}" />
+                                                <h:commandButton value="last" 
+                                                                 action="#{pdfBean.pageLast}"
+                                                                 disabled="#{pdfBean.dataTable.first + pdfBean.dataTable.rows
+                                                                             >= pdfBean.dataTable.rowCount}" />
+                                            </h:panelGrid>
+                                        </h:form>            
+                                    </div>
+                                </div>
+                                <div id="htmlHide" style="display:none; text-align: center;">
+                                    <div id="tablediv">
+                                        <h:form id="htmlForm">
+                                            <h:dataTable id="dataTable"
+                                                         styleClass="view-table"
+                                                         headerClass="view-table-header"
+                                                         rowClasses="view-table-odd-row,view-table-even-row"
+                                                         binding="#{htmlBean.dataTable}" 
+                                                         value="#{htmlBean.dataList}" 
+                                                         var="dataItem" rows="15">
 
-                    <h:column>
-                        <f:facet name="header">
-                            URL ID
-                        </f:facet>
-                        #{dataItem.urlID}
-                    </h:column>
+                                                <h:column>
+                                                    <f:facet name="header">
+                                                        Url Id
+                                                    </f:facet>
+                                                    #{dataItem.urlID}
+                                                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            URL
-                        </f:facet>
-                        #{dataItem.url}
-                    </h:column>
+                                                <h:column>
+                                                    <f:facet name="header">
+                                                        Html Name
+                                                    </f:facet>
+                                                    #{dataItem.htmlName}
+                                                </h:column>
 
-                </h:dataTable>
-                <input type="hidden" name="rowIndex" />
-                    <h:commandLink id="updateEdit" type="hidden" 
-                                   immediate="true" action="#{htmlBean.selectDocument()}">
-                        <f:actionListener binding="#{changeBean.setType('html')}"/>
-                    </h:commandLink>
-            </h:form>
-        </div>
-        <div id="navbtn">
-            <h:form>
-                <h:panelGrid columns="4" width="100%">
-                    <h:commandButton value="first" 
-                                     action="#{htmlBean.pageFirst}"
-                                     disabled="#{htmlBean.dataTable.first == 0}" />
-                    <h:commandButton value="prev" 
-                                     action="#{htmlBean.pagePrevious}"
-                                     disabled="#{htmlBean.dataTable.first == 0}" />
-                    <h:commandButton value="next" 
-                                     action="#{htmlBean.pageNext}"
-                                     disabled="#{htmlBean.dataTable.first + htmlBean.dataTable.rows
-                                                 >= htmlBean.dataTable.rowCount}" />
-                    <h:commandButton value="last" 
-                                     action="#{htmlBean.pageLast}"
-                                     disabled="#{htmlBean.dataTable.first + htmlBean.dataTable.rows
-                                                 >= htmlBean.dataTable.rowCount}" />
-                </h:panelGrid>
-            </h:form>
-        </div> 
-                           </div>
-                           <div id="rssHide" style="display:none;">
-                               <div id="tablediv">
-            <h:form id="rssForm">
-                <h:dataTable id="dataTable"
-                    styleClass="view-table"
-                             headerClass="view-table-header"
-                             rowClasses="view-table-odd-row,view-table-even-row"
-                             binding="#{rssBean.dataTable}" 
-                             value="#{rssBean.latestList}" 
-                             var="dataItem" rows="18">
+                                            </h:dataTable>
+                                            <input type="hidden" name="rowIndex" />
+                                            <h:commandLink id="updateEdit" type="hidden" 
+                                                           immediate="true" action="#{htmlBean.selectDataItem()}">
+                                                <f:actionListener binding="#{changeBean.setType('html')}"/>
+                                            </h:commandLink>
+                                        </h:form>
+                                    </div>
+                                    <h:outputText value="Page #{htmlBean.getCurrentPage()}/#{htmlBean.getTotalPages()} "/>
+                                    <div id="navbtn">
+                                        <h:form>
+                                            <h:panelGrid columns="4" width="100%">
+                                                <h:commandButton value="first" 
+                                                                 action="#{htmlBean.pageFirst}"
+                                                                 disabled="#{htmlBean.dataTable.first == 0}" />
+                                                <h:commandButton value="prev" 
+                                                                 action="#{htmlBean.pagePrevious}"
+                                                                 disabled="#{htmlBean.dataTable.first == 0}" />
+                                                <h:commandButton value="next" 
+                                                                 action="#{htmlBean.pageNext}"
+                                                                 disabled="#{htmlBean.dataTable.first + htmlBean.dataTable.rows
+                                                                             >= htmlBean.dataTable.rowCount}" />
+                                                <h:commandButton value="last" 
+                                                                 action="#{htmlBean.pageLast}"
+                                                                 disabled="#{htmlBean.dataTable.first + htmlBean.dataTable.rows
+                                                                             >= htmlBean.dataTable.rowCount}" />
+                                            </h:panelGrid>
+                                        </h:form>
+                                    </div> 
+                                </div>
+                                <div id="rssHide" style="display:none; text-align: center;">
+                                    <div id="tablediv">
+                                        <h:form id="rssForm">
+                                            <h:dataTable id="dataTable"
+                                                         styleClass="view-table"
+                                                         headerClass="view-table-header"
+                                                         rowClasses="view-table-odd-row,view-table-even-row"
+                                                         binding="#{rssBean.dataTable}" 
+                                                         value="#{rssBean.dataList}" 
+                                                         var="dataItem" rows="15">
 
-                    <h:column>
-                        <f:facet name="header">
-                            URL ID
-                        </f:facet>
-                        #{dataItem.urlID}
-                    </h:column>
+                                                <h:column>
+                                                    <f:facet name="header">
+                                                        Url Id
+                                                    </f:facet>
+                                                    #{dataItem.urlID}
+                                                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            Feed Title
-                        </f:facet>
-                        #{dataItem.feedTitle}
-                    </h:column>
+                                                <h:column>
+                                                    <f:facet name="header">
+                                                        Feed Title
+                                                    </f:facet>
+                                                    #{dataItem.feedTitle}
+                                                </h:column>
 
-                </h:dataTable>
-                <input type="hidden" name="rowIndex" />
-                    <h:commandLink id="updateEdit" type="hidden" 
-                                       immediate="true" action="#{rssBean.selectDocument()}">
-                        <f:actionListener binding="#{changeBean.setType('rss')}"/>
-                    </h:commandLink>
-            </h:form>
-        </div>
-        <div id="navbtn">
-            <h:form>
-                <h:panelGrid columns="4" width="100%">
-                    <h:commandButton value="first" 
-                                     action="#{rssBean.pageFirst}"
-                                     disabled="#{rssBean.dataTable.first == 0}" />
-                    <h:commandButton value="prev" 
-                                     action="#{rssBean.pagePrevious}"
-                                     disabled="#{rssBean.dataTable.first == 0}" />
-                    <h:commandButton value="next" 
-                                     action="#{rssBean.pageNext}"
-                                     disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
-                                                 >= rssBean.dataTable.rowCount}" />
-                    <h:commandButton value="last" 
-                                     action="#{rssBean.pageLast}"
-                                     disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
-                                                 >= rssBean.dataTable.rowCount}" />
-                </h:panelGrid>
-            </h:form>
-        </div>
-                           </div>
-                       </div>
-                       </div>
-                   </div>
+                                            </h:dataTable>
+                                            <input type="hidden" name="rowIndex" />
+                                            <h:commandLink id="updateEdit" type="hidden" 
+                                                           immediate="true" action="#{rssBean.selectDataItem()}">
+                                                <f:actionListener binding="#{changeBean.setType('rss')}"/>
+                                            </h:commandLink>
+                                        </h:form>
+                                    </div>
+                                    <h:outputText value="Page #{rssBean.getCurrentPage()}/#{rssBean.getTotalPages()} "/>
+                                    <div id="navbtn">
+                                        <h:form>
+                                            <h:panelGrid columns="4" width="100%">
+                                                <h:commandButton value="first" 
+                                                                 action="#{rssBean.pageFirst}"
+                                                                 disabled="#{rssBean.dataTable.first == 0}" />
+                                                <h:commandButton value="prev" 
+                                                                 action="#{rssBean.pagePrevious}"
+                                                                 disabled="#{rssBean.dataTable.first == 0}" />
+                                                <h:commandButton value="next" 
+                                                                 action="#{rssBean.pageNext}"
+                                                                 disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
+                                                                             >= rssBean.dataTable.rowCount}" />
+                                                <h:commandButton value="last" 
+                                                                 action="#{rssBean.pageLast}"
+                                                                 disabled="#{rssBean.dataTable.first + rssBean.dataTable.rows
+                                                                             >= rssBean.dataTable.rowCount}" />
+                                            </h:panelGrid>
+                                        </h:form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
