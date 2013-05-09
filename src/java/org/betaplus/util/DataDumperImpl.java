@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +18,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.betaplus.core.WebsiteMonitor;
 import org.betaplus.datatypes.KeyWord;
 import org.betaplus.datatypes.Pdf;
 import org.betaplus.datatypes.RssFeed;
@@ -35,6 +37,10 @@ public class DataDumperImpl implements DataDumper {
     Connection conn;
     Statement stat;
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
 
         DatabaseGenerator g = new DatabaseGenerator();
@@ -46,18 +52,24 @@ public class DataDumperImpl implements DataDumper {
                 + "========================================================\n");
 
         DataDumper dd = new DataDumperImpl();
-        String[] urls = {"http://www.lga.org.mt/lga/content.aspx?id=92272", "http://www.gov.im/gambling/regulatory.xml", "http://regulations.porezna-uprava.hr/"};
-        String[] sources = {"http://www.lga.org.mt/lga/content", "http://www.gov.im/gambling/", "http://regulations.porezna-uprava.hr/"};
+        String[] urls = {"http://regulations.porezna-uprava.hr/PrikaziPropis.asp?file=agc.XML&ime=Act%20on%20Games%20of%20Chance&idAktualni=1098", "http://www.lga.org.mt/lga/content.aspx?id=92272",  "http://www.gov.im/gambling/regulatory.xml"};
+        String[] sources = {"http://regulations.porezna-uprava.hr/", "http://www.lga.org.mt/lga/content", "http://www.gov.im/gambling/regulatory.xml"};
+        String[] rssSource = {"test.xml", "test.xml", "feed://www.gov.im/rssnews.gov"};
         for (int i = 0; i < urls.length; i++) {
-            WebSource ws = new WebSource(sources[i], urls[i], null, i);
+            WebSource ws = new WebSource(sources[i], urls[i], rssSource[i], i);
             dd.dumpWebSource(ws);
-            if (i == 0) {
+            if (i == 1) {
                 dd.dumpKeyWord(new KeyWord("file_provider", ws));
-            }            
+            }
             dd.dumpKeyWord(new KeyWord("pdf", ws));
         }
+        dd.dumpUser(new User("James Finney", "eeue3c@bangor.ac.uk"));
+        dd.dumpUser(new User("Stephen Russell", "eeue0f@bangor.ac.uk"));        
     }
 
+    /**
+     *
+     */
     public DataDumperImpl() {
         try {
             SimpleDataSource.init("data/database.properties");
@@ -100,9 +112,9 @@ public class DataDumperImpl implements DataDumper {
             is = new FileInputStream(f);
             byte[] b = new byte[(int) f.length()];
             is.read(b);
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO Pdfs (Pdf_Hash, Url_Id, Pdf_File, Pdf_Name) "
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO Pdfs (Pdf_Hash, Url_Id, Pdf_File, Pdf_Name, Pdf_Url) "
                     + "VALUES ('" + pdf.getPdfHash() + "', '" + urlId + ""
-                    + "', '" + b + "', '" + pdf.getPdfName() + "')");
+                    + "', '" + b + "', '" + pdf.getPdfName() + "', '" + pdf.getPdfUrl() + "')");
             statement.execute();
             ret = true;
         } catch (FileNotFoundException ex) {
@@ -124,7 +136,23 @@ public class DataDumperImpl implements DataDumper {
 
     @Override
     public boolean dumpRSS(RssFeed rss) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            ResultSet r = stat.executeQuery("SELECT Url_Id FROM Urls WHERE Url_Name='" + rss.getWs().getSource() + "'");
+            String urlId = "";
+            if (r.next()) {
+                urlId = r.getString("Url_Id");
+            }
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO Rss (Feed_Title, Feed_Des, Link_Title, Link_Des, Link_Pub_Date, Link_Link, Url_Id) "
+                    + "VALUES ('" + rss.getFeedTitle() + "', '" + rss.getFeedDes()
+                    + "', '" + rss.getLinkTitle() + "', '" + rss.getLinkDes()
+                    + "', '" + rss.getLinkPubDate() + "', '" + rss.getLinkLink()
+                    + "', '" + urlId + "')");
+            statement.execute();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DataDumperImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     @Override
@@ -135,17 +163,17 @@ public class DataDumperImpl implements DataDumper {
             if (r.next()) {
                 urlId = r.getString("Url_Id");
             }
-            for (String s : webText.getPageContent()) {
-                for (int i = 0; i < s.length(); i++) {
-                    if (s.charAt(i) == '\'') {
-                        s = s.substring(0, i-1) + "\\" + s.substring(i);
-                    }
+            String s = webText.getPageContent();
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) == '\'') {
+                    s = s.substring(0, i - 1) + "\\" + s.substring(i);
                 }
-                PreparedStatement statement = conn.prepareStatement("INSERT INTO Html (Html_Content, Html_Name, Url_Id) "
-                        + "VALUES ('" + s + "', '" + webText.getPageTitle()
-                        + "', '" + urlId + "')");
-                statement.execute();
             }
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO Html (Html_Content, Html_Name, Html_Url, Url_Id) "
+                    + "VALUES ('" + s + "', '" + webText.getPageTitle() + "', '" + webText.getPageUrl()
+                    + "', '" + urlId + "')");
+            statement.execute();
+
 
             return true;
         } catch (SQLException ex) {
@@ -183,5 +211,27 @@ public class DataDumperImpl implements DataDumper {
             Logger.getLogger(DataDumperImpl.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+    
+    
+    private static String getHash(File f) {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(f);
+            return DigestUtils.md5Hex(is);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        } catch (IOException ex) {
+            Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex) {
+                Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
 }

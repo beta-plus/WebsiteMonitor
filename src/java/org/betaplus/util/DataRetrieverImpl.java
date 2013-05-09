@@ -22,6 +22,9 @@ public class DataRetrieverImpl implements DataRetriever {
     Connection conn;
     Statement stat;
 
+    /**
+     *
+     */
     public DataRetrieverImpl() {
         try {
             SimpleDataSource.init("data/database.properties");
@@ -68,6 +71,10 @@ public class DataRetrieverImpl implements DataRetriever {
         return r;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             DataRetrieverImpl dr = new DataRetrieverImpl();

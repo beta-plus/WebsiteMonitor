@@ -4,6 +4,10 @@
  */
 package org.betaplus.util;
 
+import java.util.LinkedList;
+import org.betaplus.datatypes.Notification;
+import org.betaplus.datatypes.User;
+
 /**
  * Interface defining notification generation.
  * 
@@ -12,37 +16,26 @@ package org.betaplus.util;
 public interface Notifier {
     
     /**
-     * RSS data identifier for messageConstructor.
-     */
-    static final int RSS_NOTIFICATION = 0;
-    
-    /**
-     * PDF data identifier for messageConstructor.
-     */
-    static final int PDF_NOTIFICATION = 1;
-    
-    /**
-     * Web page data identifier for messageConstructor.
-     */
-    static final int WEB_NOTIFICATION = 2;
-    
-    /**
-     * Send an update to a given users email.
+     * Send an update.
      * 
-     * @param message
-     * @param email
-     * @return 
+     * @param to
+     * @return success 
      */
-    public boolean sendNotification(String message, String email);
+    public boolean sendNotification(LinkedList<User> to);
     
     /**
-     * Construct a notification message.
+     * Add an update to the list.
      * 
-     * @param percentChanged
-     * @param data
-     * @param notificationType
-     * @return 
+     * @param note
+     * @return success
      */
-    public String messageConstructor(double[] percentChanged, String data, int notificationType);
+    public boolean addNotification(Notification note);
     
+    /**
+     * Reset list of notifications.
+     * 
+     * @param note
+     * @return success
+     */
+    public boolean clearNotifications();
 }

@@ -10,13 +10,23 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.betaplus.core.WebsiteMonitor;
+import org.betaplus.datatypes.Pdf;
+import org.betaplus.datatypes.RssFeed;
+import org.betaplus.datatypes.WebSource;
+import org.betaplus.datatypes.WebText;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,17 +53,23 @@ public class WebScraperImpl implements WebScraper {
      * @return
      */
     @Override
-    public LinkedList<String> getTextFromUrl(String url, String dataSource) {
+    public ArrayList<WebText> getTextFromUrl(WebSource url, String dataSource) {
         //The list of page content
-        LinkedList<String> l = new LinkedList<String>();
+        ArrayList<WebText> l = new ArrayList<WebText>();
         /**
          * Simply grab the text here and store it. It's unlikely that duplicate
          * pages will exist named differently, so no need to check for identical
          * match in large list.
          */
-        l.add(removeMarkup(readHTML(url)));
-        for (String s : getLinks(readHTML(url), dataSource, new LinkedList<String>())) {
-            l.add(removeMarkup(readHTML(s)));
+        WebText wt = removeMarkup(readHTML(url.getWebPageURL()), url.getWebPageURL(), url);
+        if (wt != null) {
+            l.add(wt);
+        }
+        for (String s : getLinks(readHTML(url.getWebPageURL()), dataSource, new ArrayList<String>(), new ArrayList<String>())) {
+            wt = removeMarkup(readHTML(s), s, url);
+            if (wt != null) {
+                l.add(wt);
+            }
         }
         return l;
     }
@@ -64,19 +80,30 @@ public class WebScraperImpl implements WebScraper {
      * domain key word that will stop the search from leaving the current
      * domain.
      *
-     * Example: getTextFromRss("http://www.foo.com/index", foo); 
-     * Example: getTextFromRss("http://www.foo.blog.com/index", foo.blog);
+     * Example: getTextFromRss("http://www.foo.com/index", foo); Example:
+     * getTextFromRss("http://www.foo.blog.com/index", foo.blog);
      *
      * @param url
+     * @param dataSource
      * @return
      */
     @Override
-    public LinkedList<SyndEntry> getTextFromRss(String url, String dataSource) {
-        LinkedList<SyndEntry> l = new LinkedList<SyndEntry>();
+    public ArrayList<RssFeed> getTextFromRss(WebSource url, String dataSource) {
+        ArrayList<RssFeed> l = new ArrayList<RssFeed>();
         try {
             SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build(new XmlReader(new URL(url)));
-            l = (LinkedList) feed.getEntries();
+            SyndFeed feed = input.build(new XmlReader(new URL(url.getRssURL())));
+            for (Object s : feed.getEntries()) {
+                SyndEntry se = (SyndEntry) s;
+                String linkTitle = se.getTitle().replace("'", "");
+                String linkDes = se.getDescription().getValue().replace("'", "");
+                Date linkPubDate = se.getPublishedDate();
+                String linkLink = se.getLink().replace("'", "");
+                l.add(new RssFeed(linkTitle, linkDes, linkTitle, linkDes, linkDes, linkLink, url));
+            }
+
+        } catch (MalformedURLException ex) {
+            //Logger.getLogger(WebScraperImpl.class.getName()).log(Level.INFO, null, ex);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(WebScraperImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FeedException ex) {
@@ -85,6 +112,7 @@ public class WebScraperImpl implements WebScraper {
             Logger.getLogger(WebScraperImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return l;
+
     }
 
     /**
@@ -100,20 +128,20 @@ public class WebScraperImpl implements WebScraper {
      * @return
      */
     @Override
-    public LinkedList<File> getPDFsFromUrl(String url, String dataSource,
-            LinkedList<String> keyWords) {
+    public ArrayList<Pdf> getPDFsFromUrl(WebSource url, String dataSource,
+            ArrayList<String> keyWords) {
         //The list of pdf's.
-        LinkedList<File> l = new LinkedList<File>();
+        ArrayList<Pdf> l = new ArrayList<Pdf>();
         try {
-            l = extractPDFLinks(readHTML(url), keyWords, l);
+            l = extractPDFLinks(readHTML(url.getWebPageURL()), keyWords, l, url);
         } catch (Exception ex) {
             Logger.getLogger(WebScraperImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         //Check each link for pdf's and retrive.
         int c = 0;
-        for (String s : getLinks(readHTML(url), dataSource, new LinkedList<String>())) {
+        for (String s : getLinks(readHTML(url.getWebPageURL()), dataSource, new ArrayList<String>(), new ArrayList<String>())) {
             try {
-                LinkedList<File> extractPDFLinks = extractPDFLinks(readHTML(s), keyWords, l);
+                ArrayList<Pdf> extractPDFLinks = extractPDFLinks(readHTML(s), keyWords, l, url);
             } catch (Exception ex) {
                 Logger.getLogger(WebScraperImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -149,23 +177,38 @@ public class WebScraperImpl implements WebScraper {
      * @param doc
      * @return
      */
-    private LinkedList<String> getLinks(Document doc, String dataSource, LinkedList<String> lf) {
+    private ArrayList<String> getLinks(Document doc, String dataSource, ArrayList<String> lf, ArrayList<String> frameList) {
         Elements els;
         try {
             //parse links from body of page
             els = doc.body().select("a[href]");
         } catch (NullPointerException ex) {
             try {
-                //If no links check for frames.
-                els = doc.getElementsByTag("frame");
-                for (Element e : els) {
-                    getLinks((Document) e, dataSource, lf);
+                els = doc.body().select("onclick");
+            } catch (NullPointerException exc) {
+                try {
+                    //If no links check for frames.
+                    els = doc.getElementsByTag("frame");
+                    for (Element e : els) {
+                        String s;
+                        if (!e.attr("src").contains(dataSource)) {
+                            s = dataSource + e.attr("src");
+                        } else {
+                            s = e.attr("src");
+                        }
+
+                        if (frameList.isEmpty() || !frameList.contains(s)) {
+                            frameList.add(s);
+                            getLinks(readHTML(s), dataSource, lf, frameList);
+                        }
+
+                    }
+                } catch (NullPointerException excp) {
+                    els = new Elements();
                 }
-            } catch (NullPointerException e) {
-                els = new Elements();
             }
+
         }
-        lf.add("");
         //get URL of each link
         for (Element e : els) {
             String url = e.absUrl("href");
@@ -176,11 +219,11 @@ public class WebScraperImpl implements WebScraper {
                     inList = true;
                 }
             }
-            if (!inList && url.contains(dataSource)) {
+            if ((!inList && url.contains(dataSource)) || lf.isEmpty()) {
                 lf.add(url);
-                System.out.println(url);
+
                 //if the link is new then it may have more links!
-                getLinks(readHTML(url), dataSource, lf);
+                getLinks(readHTML(url), dataSource, lf, frameList);
             }
         }
 
@@ -195,9 +238,9 @@ public class WebScraperImpl implements WebScraper {
      * @return
      * @throws Exception
      */
-    private LinkedList<File> extractPDFLinks(Document doc, LinkedList<String> keyWords, LinkedList<File> lf) throws Exception {
+    private ArrayList<Pdf> extractPDFLinks(Document doc, ArrayList<String> keyWords, ArrayList<Pdf> lf, WebSource ws) throws Exception {
         //A list of urls used to gether links.
-        LinkedList<String> ol = new LinkedList<String>();
+        ArrayList<String> ol = new ArrayList<String>();
         //A list of every link without prejudice.
         Elements els;
         try {
@@ -224,19 +267,17 @@ public class WebScraperImpl implements WebScraper {
             }
             boolean addFile = true;
             if (getFile) {
-                String nm = absUrl.replace("http://www.lga.org.mt/common/file_provider.aspx?id=", "");
-                File f = downloadFile(new URL(absUrl), "data", "document_" + nm);
+                String nm = "";//absUrl.replace("http://www.lga.org.mt/common/file_provider.aspx?id=", "");
+                Pdf f = downloadFile(new URL(absUrl), "data", "document_" + nm, ws);
                 if (f != null) {
-                    for (File fil : lf) {
+                    for (Pdf fil : lf) {
                         ComparatorImpl c = new ComparatorImpl();
-                        if (c.compareChecksums(fil, f, Comparator.SHA_512)) {
+                        if (c.compareChecksums(fil.getPdfFile(), f.getPdfFile(), Comparator.SHA_512)) {
                             addFile = false;
                         }
                     }
                     if (addFile) {
                         lf.add(f);
-                        System.out.println(absUrl);
-                        System.out.println(lf.getLast().getName());
                     }
                 }
             }
@@ -257,7 +298,7 @@ public class WebScraperImpl implements WebScraper {
             url.openConnection();
             //Get content of connection
             f = (File) url.getContent();
-            System.out.println(f.getAbsolutePath());
+
         } catch (ClassCastException ex) {
             //Not a file found.
             f = null;
@@ -270,9 +311,12 @@ public class WebScraperImpl implements WebScraper {
     /**
      * Downloads a single file from a given URL.
      *
-     * @throws IOException ,MalformedURLException
+     * @param url
+     * @param directory
+     * @param name
+     * @return
      */
-    public static File downloadFile(URL url, String directory, String name) {
+    public static Pdf downloadFile(URL url, String directory, String name, WebSource ws) {
         try {
 
             //Get a connection to the URL and start up a buffered reader.
@@ -288,9 +332,10 @@ public class WebScraperImpl implements WebScraper {
             }
             writer.close();
             reader.close();
-            return new File(directory + "/" + name + ".pdf");
+            File f = new File(directory + "/" + name + ".pdf");
+            return new Pdf(getHash(f), f.getName(), url.toString(), f, ws);
         } catch (IOException ex) {
-            System.out.println("File Not Found...");
+
             return null;
         }
     }
@@ -301,13 +346,45 @@ public class WebScraperImpl implements WebScraper {
      * @param doc
      * @return
      */
-    private String removeMarkup(Document doc) {
+    private WebText removeMarkup(Document doc, String webLink, WebSource url) {
         String pageText;
+        String title;
         try {
             pageText = doc.body().text();
+            try {
+                title = doc.title();
+                if (title.isEmpty()) {
+                    title = "No Title";
+                }
+                return new WebText(pageText, title, webLink, url);
+            } catch (NullPointerException ex) {
+                return new WebText(pageText, webLink, webLink, url);
+            }
         } catch (NullPointerException ex) {
-            pageText = "";
+            return null;
         }
-        return pageText;
+
+
+    }
+
+    private static String getHash(File f) {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(f);
+            return DigestUtils.md5Hex(is);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        } catch (IOException ex) {
+            Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex) {
+                Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
 }

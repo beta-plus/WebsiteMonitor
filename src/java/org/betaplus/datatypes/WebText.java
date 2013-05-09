@@ -4,29 +4,29 @@
  */
 package org.betaplus.datatypes;
 
-import java.util.LinkedList;
-
 /**
  *
  * @author StephenJohnRussell
  */
 public class WebText {
     
-    private LinkedList<String> pageContent;
+    private String pageContent;
     private String pageTitle;
+    private String pageUrl;
     private WebSource we;
 
-    public WebText(LinkedList<String> pageContent, String pageTitle, WebSource we) {
+    public WebText(String pageContent, String pageTitle, String pageUrl, WebSource we) {
         this.pageContent = pageContent;
         this.pageTitle = pageTitle;
+        this.pageUrl = pageUrl;
         this.we = we;
     }
 
-    public LinkedList<String> getPageContent() {
+    public String getPageContent() {
         return pageContent;
     }
 
-    public void setPageContent(LinkedList<String> pageContent) {
+    public void setPageContent(String pageContent) {
         this.pageContent = pageContent;
     }
 
@@ -36,6 +36,14 @@ public class WebText {
 
     public void setPageTitle(String pageTitle) {
         this.pageTitle = pageTitle;
+    }
+
+    public String getPageUrl() {
+        return pageUrl;
+    }
+
+    public void setPageUrl(String pageUrl) {
+        this.pageUrl = pageUrl;
     }
 
     public WebSource getWe() {

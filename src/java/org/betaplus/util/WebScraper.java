@@ -6,7 +6,12 @@ package org.betaplus.util;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import org.betaplus.datatypes.Pdf;
+import org.betaplus.datatypes.RssFeed;
+import org.betaplus.datatypes.WebSource;
+import org.betaplus.datatypes.WebText;
 
 /**
  * Interface defining the tasks associated with retrieving data from given  web
@@ -28,7 +33,7 @@ public interface WebScraper {
      * @param dataSource
      * @return 
      */
-    public LinkedList<String> getTextFromUrl(String url, String dataSource);
+    public ArrayList<WebText> getTextFromUrl(WebSource url, String dataSource);
     
     /**
      * Returns a list of SyndEntry containing the content presented by a given 
@@ -44,7 +49,7 @@ public interface WebScraper {
      * @param url
      * @return 
      */
-    public LinkedList<SyndEntry> getTextFromRss(String url, String dataSource);
+    public ArrayList<RssFeed> getTextFromRss(WebSource url, String dataSource);
     
     /**
      * Returns a list of file's containing the PDF's stored at a given URL
@@ -61,8 +66,8 @@ public interface WebScraper {
      * @param keyWords
      * @return 
      */
-    public LinkedList<File> getPDFsFromUrl(String url, String dataSource, 
-            LinkedList<String> keyWords);
+    public ArrayList<Pdf> getPDFsFromUrl(WebSource url, String dataSource, 
+            ArrayList<String> keyWords);
     
     
 }

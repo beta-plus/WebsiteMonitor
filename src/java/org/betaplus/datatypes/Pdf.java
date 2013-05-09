@@ -14,14 +14,16 @@ public class Pdf {
     
     private String pdfHash;
     private String pdfName;
+    private String pdfUrl;
     private File pdfFile;
     private static WebSource ws;
 
-    public Pdf(String pdfHash, String pdfName, File pdfFile, WebSource ws) {
+    public Pdf(String pdfHash, String pdfName, String pdfUrl, File pdfFile, WebSource ws) {
         this.pdfHash = pdfHash;
         this.pdfName = pdfName;
+        this.pdfUrl = pdfUrl;
         this.pdfFile = pdfFile;
-        this.ws = ws;
+        Pdf.ws = ws;
     }
 
     public String getPdfHash() {
@@ -40,6 +42,14 @@ public class Pdf {
         this.pdfName = pdfName;
     }
 
+    public String getPdfUrl() {
+        return pdfUrl;
+    }
+
+    public void setPdfUrl(String pdfUrl) {
+        this.pdfUrl = pdfUrl;
+    }
+
     public File getPdfFile() {
         return pdfFile;
     }
@@ -52,7 +62,9 @@ public class Pdf {
         return ws;
     }
 
-    public void setWs(WebSource ws) {
-        this.ws = ws;
+    public static void setWs(WebSource ws) {
+        Pdf.ws = ws;
     }
+
+    
 }
