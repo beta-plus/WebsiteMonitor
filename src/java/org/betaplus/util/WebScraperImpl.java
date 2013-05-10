@@ -65,7 +65,8 @@ public class WebScraperImpl implements WebScraper {
         if (wt != null) {
             l.add(wt);
         }
-        for (String s : getLinks(readHTML(url.getWebPageURL()), dataSource, new ArrayList<String>(), new ArrayList<String>())) {
+        int c = 0;
+        for (String s : getLinks(readHTML(url.getWebPageURL()), dataSource, new ArrayList<String>(), new ArrayList<String>(), c)) {
             wt = removeMarkup(readHTML(s), s, url);
             if (wt != null) {
                 l.add(wt);
@@ -139,7 +140,7 @@ public class WebScraperImpl implements WebScraper {
         }
         //Check each link for pdf's and retrive.
         int c = 0;
-        for (String s : getLinks(readHTML(url.getWebPageURL()), dataSource, new ArrayList<String>(), new ArrayList<String>())) {
+        for (String s : getLinks(readHTML(url.getWebPageURL()), dataSource, new ArrayList<String>(), new ArrayList<String>(), c)) {
             try {
                 ArrayList<Pdf> extractPDFLinks = extractPDFLinks(readHTML(s), keyWords, l, url);
             } catch (Exception ex) {
@@ -177,56 +178,58 @@ public class WebScraperImpl implements WebScraper {
      * @param doc
      * @return
      */
-    private ArrayList<String> getLinks(Document doc, String dataSource, ArrayList<String> lf, ArrayList<String> frameList) {
-        Elements els;
-        try {
-            //parse links from body of page
-            els = doc.body().select("a[href]");
-        } catch (NullPointerException ex) {
+    private ArrayList<String> getLinks(Document doc, String dataSource, ArrayList<String> lf, ArrayList<String> frameList, int depth) {
+        if (depth < 400) {
+            depth++;
+            Elements els;
             try {
-                els = doc.body().select("onclick");
-            } catch (NullPointerException exc) {
+                //parse links from body of page
+                els = doc.body().select("a[href]");
+            } catch (NullPointerException ex) {
                 try {
-                    //If no links check for frames.
-                    els = doc.getElementsByTag("frame");
-                    for (Element e : els) {
-                        String s;
-                        if (!e.attr("src").contains(dataSource)) {
-                            s = dataSource + e.attr("src");
-                        } else {
-                            s = e.attr("src");
-                        }
+                    els = doc.body().select("onclick");
+                } catch (NullPointerException exc) {
+                    try {
+                        //If no links check for frames.
+                        els = doc.getElementsByTag("frame");
+                        for (Element e : els) {
+                            String s;
+                            if (!e.attr("src").contains(dataSource)) {
+                                s = dataSource + e.attr("src");
+                            } else {
+                                s = e.attr("src");
+                            }
 
-                        if (frameList.isEmpty() || !frameList.contains(s)) {
-                            frameList.add(s);
-                            getLinks(readHTML(s), dataSource, lf, frameList);
-                        }
+                            if (frameList.isEmpty() || !frameList.contains(s)) {
+                                frameList.add(s);
+                                getLinks(readHTML(s), dataSource, lf, frameList, depth);
+                            }
 
+                        }
+                    } catch (NullPointerException excp) {
+                        els = new Elements();
                     }
-                } catch (NullPointerException excp) {
-                    els = new Elements();
+                }
+
+            }
+            //get URL of each link
+            for (Element e : els) {
+                String url = e.absUrl("href");
+                //Check list for presence of link and source of link.            
+                boolean inList = false;
+                for (int i = 0; i < lf.size(); i++) {
+                    if (lf.get(i).equalsIgnoreCase(url)) {
+                        inList = true;
+                    }
+                }
+                if ((!inList && url.contains(dataSource)) || lf.isEmpty()) {
+                    lf.add(url);
+
+                    //if the link is new then it may have more links!
+                    getLinks(readHTML(url), dataSource, lf, frameList, depth);
                 }
             }
-
         }
-        //get URL of each link
-        for (Element e : els) {
-            String url = e.absUrl("href");
-            //Check list for presence of link and source of link.            
-            boolean inList = false;
-            for (int i = 0; i < lf.size(); i++) {
-                if (lf.get(i).equalsIgnoreCase(url)) {
-                    inList = true;
-                }
-            }
-            if ((!inList && url.contains(dataSource)) || lf.isEmpty()) {
-                lf.add(url);
-
-                //if the link is new then it may have more links!
-                getLinks(readHTML(url), dataSource, lf, frameList);
-            }
-        }
-
         return lf;
     }
 
@@ -239,8 +242,7 @@ public class WebScraperImpl implements WebScraper {
      * @throws Exception
      */
     private ArrayList<Pdf> extractPDFLinks(Document doc, ArrayList<String> keyWords, ArrayList<Pdf> lf, WebSource ws) throws Exception {
-        //A list of urls used to gether links.
-        ArrayList<String> ol = new ArrayList<String>();
+        ArrayList<String> visited = new ArrayList<String>(200);
         //A list of every link without prejudice.
         Elements els;
         try {
@@ -248,37 +250,26 @@ public class WebScraperImpl implements WebScraper {
         } catch (NullPointerException ex) {
             els = new Elements();
         }
-        ol.add("");
         boolean getFile = false;
         for (Element e : els) {
             //The String rep of a link found
             String absUrl = e.absUrl("href");
             //Check each keyword for presence in link
+            String kw = "";
             for (String s : keyWords) {
                 if (absUrl.contains(s)) {
-                    getFile = true;
-                    //Make sure link not already used
-                    for (String usedURL : ol) {
-                        if (usedURL.equalsIgnoreCase(absUrl)) {
-                            getFile = false;
-                        }
+                    if (!visited.contains(absUrl)) {
+                        visited.add(absUrl);
+                        int index = absUrl.lastIndexOf("/");
+                        String fileName = absUrl.substring(index + 1);
+                        File f = downloadFile(new URL(absUrl), "data", fileName, ws);
+                        String h = getHash(f);
+                        lf.add(new Pdf(h, f.getName(), absUrl, f, ws));
+                        System.out.println(fileName);
+                        System.out.println(absUrl);
+                        break;
                     }
-                }
-            }
-            boolean addFile = true;
-            if (getFile) {
-                String nm = absUrl.replace(ws.getSource(), "");
-                Pdf f = downloadFile(new URL(absUrl), "data", "document_" + nm, ws);
-                if (f != null) {
-                    for (Pdf fil : lf) {
-                        ComparatorImpl c = new ComparatorImpl();
-                        if (c.compareChecksums(fil.getPdfFile(), f.getPdfFile(), Comparator.SHA_512)) {
-                            addFile = false;
-                        }
-                    }
-                    if (addFile) {
-                        lf.add(f);
-                    }
+
                 }
             }
         }
@@ -316,7 +307,7 @@ public class WebScraperImpl implements WebScraper {
      * @param name
      * @return
      */
-    public static Pdf downloadFile(URL url, String directory, String name, WebSource ws) {
+    public static File downloadFile(URL url, String directory, String name, WebSource ws) throws IOException {
         try {
 
             //Get a connection to the URL and start up a buffered reader.
@@ -332,11 +323,10 @@ public class WebScraperImpl implements WebScraper {
             }
             writer.close();
             reader.close();
-            File f = new File(directory + "/" + name + ".pdf");
-            return new Pdf(getHash(f), f.getName(), url.toString(), f, ws);
+            return new File(directory + "/" + name + ".pdf");
         } catch (IOException ex) {
-
-            return null;
+            System.out.println(ex);
+            throw ex;
         }
     }
 

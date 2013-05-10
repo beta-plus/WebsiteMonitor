@@ -52,16 +52,16 @@ public class DataDumperImpl implements DataDumper {
                 + "========================================================\n");
 
         DataDumper dd = new DataDumperImpl();
-        String[] urls = {"http://regulations.porezna-uprava.hr/PrikaziPropis.asp?file=agc.XML&ime=Act%20on%20Games%20of%20Chance&idAktualni=1098", "http://www.lga.org.mt/lga/content.aspx?id=92272",  "http://www.gov.im/gambling/regulatory.xml"};
-        String[] sources = {"http://regulations.porezna-uprava.hr/", "http://www.lga.org.mt/lga/content", "http://www.gov.im/gambling/regulatory.xml"};
-        String[] rssSource = {"test.xml", "test.xml", "feed://www.gov.im/rssnews.gov"};
+        String[] urls = {"http://www.gov.im/gambling/regulatory.xml", "http://regulations.porezna-uprava.hr/PrikaziPropis.asp?file=agc.XML&ime=Act%20on%20Games%20of%20Chance&idAktualni=1098", "http://www.lga.org.mt/lga/content.aspx?id=92272", };
+        String[] sources = {"http://www.gov.im/gambling/", "http://regulations.porezna-uprava.hr/", "http://www.lga.org.mt/lga/content"};
+        String[] rssSource = {"www.gov.im/rssnews.gov", "test.xml", "test.xml"};
         for (int i = 0; i < urls.length; i++) {
             WebSource ws = new WebSource(sources[i], urls[i], rssSource[i], i);
             dd.dumpWebSource(ws);
-            if (i == 1) {
+            if (i == 2) {
                 dd.dumpKeyWord(new KeyWord("file_provider", ws));
             }
-            dd.dumpKeyWord(new KeyWord("pdf", ws));
+            dd.dumpKeyWord(new KeyWord(".pdf", ws));
         }
         dd.dumpUser(new User("James Finney", "eeue3c@bangor.ac.uk"));
         dd.dumpUser(new User("Stephen Russell", "eeue0f@bangor.ac.uk"));        

@@ -61,6 +61,21 @@ public class WebsiteMonitor {
         for (WebSource ws : dataSources) {
             initLists(ws);
             System.out.println("Scanning : " + ws.getSource());
+
+            System.out.println("PDFs");
+            ArrayList<Pdf> pdFsFromUrl = scraper.getPDFsFromUrl(ws, ws.getSource(), keyWords);
+            for (Pdf pdf : pdFsFromUrl) {
+                boolean gotIt = false;
+                String newHash = WebsiteMonitor.getHash(pdf.getPdfFile());
+                Collections.sort(fileHashes);
+                int indexOf = Collections.binarySearch(fileHashes, newHash);
+                if (indexOf == -1 || fileHashes.isEmpty()) {
+                    System.out.println("Dumping *+=-");
+                    dumper.dumpPDF(pdf);
+                    notify.addNotification(new Notification(pdf.getPdfName(), pdf.getPdfUrl()));
+                }
+            }
+
             System.out.println("RSS");
             ArrayList<RssFeed> textFromRss = scraper.getTextFromRss(ws, ws.getSource());
             for (RssFeed se : textFromRss) {
@@ -91,35 +106,22 @@ public class WebsiteMonitor {
                     notify.addNotification(new Notification(newWebCont.getPageTitle(), newWebCont.getPageUrl()));
                 }
             }
-
-            System.out.println("PDFs");
-            ArrayList<Pdf> pdFsFromUrl = scraper.getPDFsFromUrl(ws, ws.getSource(), keyWords);
-            for (Pdf pdf : pdFsFromUrl) {
-                boolean gotIt = false;
-                String newHash = WebsiteMonitor.getHash(pdf.getPdfFile());
-                Collections.sort(fileHashes);
-                int indexOf = Collections.binarySearch(fileHashes, newHash);
-                if (indexOf == -1 || fileHashes.isEmpty()) {
-                    System.out.println("Dumping *+=-");
-                    dumper.dumpPDF(pdf);
-                    notify.addNotification(new Notification(pdf.getPdfName(), pdf.getPdfUrl()));
-                }
-            }
             notify.sendNotification(users);
             notify.clearNotifications();
         }
         
-        File file = new File("data");        
-        String[] myFiles;      
-            if(file.isDirectory()){  
-                myFiles = file.list();  
-                for (int i=0; i<myFiles.length; i++) {  
-                    File myFile = new File(file, myFiles[i]);   
-                    if (myFile.getName().endsWith(".pdf")) {
-                        myFile.delete();  
-                    }                    
-                }  
-             }  
+        File file = new File("data");
+        String[] myFiles;
+        if (file.isDirectory()) {
+            myFiles = file.list();
+            for (int i = 0; i < myFiles.length; i++) {
+                File myFile = new File(file, myFiles[i]);
+                if (myFile.getName().endsWith(".pdf")) {
+                    myFile.delete();
+                }
+            }
+        }
+
     }
 
     private static String getHash(File f) {
