@@ -25,8 +25,6 @@ import org.betaplus.datatypes.RssFeed;
 import org.betaplus.datatypes.User;
 import org.betaplus.datatypes.WebSource;
 import org.betaplus.datatypes.WebText;
-import org.betaplus.testcases.DatabaseGenerator;
-import org.betaplus.testcases.SimpleDataSource;
 
 /**
  *

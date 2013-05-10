@@ -12,6 +12,7 @@ package org.betaplus.testcases;
  * @version 1.0
  */
 
+import org.betaplus.util.SimpleDataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import org.betaplus.testcases.SimpleDataSource;
+import org.betaplus.util.SimpleDataSource;
 
 public class UserFunctions {
 

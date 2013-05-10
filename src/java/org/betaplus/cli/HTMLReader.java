@@ -16,7 +16,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import org.betaplus.testcases.SimpleDataSource;
+import org.betaplus.util.SimpleDataSource;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

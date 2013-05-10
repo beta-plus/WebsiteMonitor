@@ -12,7 +12,7 @@ import javax.faces.component.html.HtmlDataTable;
 import javax.faces.component.html.HtmlInputHidden;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
-import org.betaplus.testcases.SimpleDataSource;
+import org.betaplus.util.SimpleDataSource;
 
 /**
  *

@@ -10,7 +10,7 @@ package org.betaplus.cli;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import org.betaplus.testcases.SimpleDataSource;
+import org.betaplus.util.SimpleDataSource;
 
 public class WebScanner {
 

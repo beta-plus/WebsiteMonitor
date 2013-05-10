@@ -12,6 +12,7 @@ package org.betaplus.testcases;
  * @version 1.0
  */
 
+import org.betaplus.util.SimpleDataSource;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
