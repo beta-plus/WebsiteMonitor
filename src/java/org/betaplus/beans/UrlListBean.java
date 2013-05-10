@@ -89,18 +89,10 @@ public class UrlListBean implements Serializable{
     public void newDataItem() throws Exception {
         getConnection();
         
-        if(dataItem.getRssUrl() != null)
-        {
-            stat.execute("INSERT INTO urls (Rss_Url, Http_Url, Url_Name) VALUES ('"
-                + dataItem.getRssUrl() + "', 'NULL', '"
-                + dataItem.getUrlName() + "')");
-        }
-        else
-        {
-            stat.execute("INSERT INTO urls (Rss_Url, Http_Url, Url_Name) "
-                + "VALUES ('NULL', '" + dataItem.getHttpUrl() + "', '"
-                + dataItem.getUrlName() + "')");
-        }
+        stat.execute("INSERT INTO urls (Rss_Url, Http_Url, Url_Name) VALUES ('"
+            + dataItem.getRssUrl() + "', '" 
+            + dataItem.getHttpUrl() + "', '"
+            + dataItem.getUrlName() + "')");
         
         clearDataItem();
     }
