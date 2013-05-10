@@ -1,12 +1,9 @@
 package org.betaplus.beans;
 
-/*
-	Title: URLData
-	Author: Ben Taylor
-	Date: May 1, 2013
-	Version: 1.0
-*/
-
+/**
+ *
+ * @author BenjaminAdamTaylor
+ */
 public class URLData 
 {
     private String urlID;

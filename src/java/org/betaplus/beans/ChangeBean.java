@@ -6,7 +6,7 @@ import javax.faces.bean.SessionScoped;
 
 /**
  *
- * @author Ben
+ * @author BenjaminAdamTaylor
  */
 @ManagedBean
 @SessionScoped

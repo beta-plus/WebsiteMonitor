@@ -1,12 +1,9 @@
 package org.betaplus.beans;
 
-/*
-	Title: PDFData
-	Author: Ben Taylor
-	Date: Apr 30, 2013
-	Version: 1.0
-*/
-
+/**
+ *
+ * @author BenjaminAdamTaylor
+ */
 public class PDFData 
 {
     private String pdfID;

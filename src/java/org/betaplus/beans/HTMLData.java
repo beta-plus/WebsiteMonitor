@@ -1,12 +1,9 @@
 package org.betaplus.beans;
 
-/*
-	Title: HTMLData
-	Author: Ben Taylor
-	Date: May 1, 2013
-	Version: 1.0
-*/
-
+/**
+ *
+ * @author BenjaminAdamTaylor
+ */
 public class HTMLData 
 {
     private String htmlID;

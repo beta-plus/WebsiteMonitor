@@ -16,7 +16,7 @@ import org.betaplus.testcases.SimpleDataSource;
 
 /**
  *
- * @author Ben
+ * @author BenjaminAdamTaylor
  */
 @ManagedBean
 @RequestScoped
