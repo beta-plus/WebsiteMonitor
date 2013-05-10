@@ -10,54 +10,93 @@ package org.betaplus.beans;
 public class PDFData 
 {
     private String pdfID;
-    private String locationDir;
+    private String pdfHash;
     private String dlDate;
+    private String pdfUrl;
     private String urlID;
-    private String url;
-    private String type;
     private String pdfName;
     
-    // Setter Methods ----------------------------------------------------------
+    /**
+     * Set the pdf ID
+     * @param pdfID 
+     */
     public void setPdfID(String pdfID)
     { this.pdfID = pdfID; }
     
-    public void setLocationDir(String locationDir)
-    { this.locationDir = locationDir; }
+    /**
+     * Set the pdf hash code
+     * @param pdfHash 
+     */
+    public void setPdfHash(String pdfHash)
+    { this.pdfHash = pdfHash; }
     
+    /**
+     * Set the pdf download date
+     * @param dlDate 
+     */
     public void setDlDate(String dlDate)
     { this.dlDate = dlDate; }
     
-    public void setUrlID(String urlID)
-    { this.urlID = urlID; }
+    /**
+     * Set the pdf url
+     * @param pdfUrl 
+     */
+    public void setPdfUrl(String pdfUrl)
+    { this.pdfUrl = pdfUrl; }
     
-    public void setUrl(String url)
-    { this.url = url; }
-    
-    public void setType(String type)
-    { this.type = type; }
-    
+    /**
+     * Set the pdf name
+     * @param pdfName 
+     */
     public void setPdfName(String pdfName)
     { this.pdfName = pdfName; }
     
-    // Getter Methods ----------------------------------------------------------
+    /**
+     * Set the urdl ID
+     * @param urlID 
+     */
+    public void setUrlID(String urlID)
+    { this.urlID = urlID; }
+    
+    /**
+     * Get the pdf ID
+     * @return 
+     */
     public String getPdfID()
     { return pdfID; }
     
-    public String getLocationDir()
-    { return locationDir; }
+    /**
+     * Get the pdf hash code
+     * @return 
+     */
+    public String getPdfHash()
+    { return pdfHash; }
     
+    /**
+     * Get the pdf download date
+     * @return 
+     */
     public String getDlDate()
     { return dlDate; }
     
-    public String getUrlID()
-    { return urlID; }
+    /**
+     * Get the pdf url
+     * @return 
+     */
+    public String getPdfUrl()
+    { return pdfUrl; }
     
-    public String getUrl()
-    { return url; }
-    
-    public String getType()
-    { return type; }
-    
+    /**
+     * Get the pdf name
+     * @return 
+     */
     public String getPdfName()
     { return pdfName; }
+    
+    /**
+     * Get the url ID
+     * @return 
+     */
+    public String getUrlID()
+    { return urlID; }
 }

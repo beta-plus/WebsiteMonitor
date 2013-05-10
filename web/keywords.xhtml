@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+        <title>Website Monitor - Keywords</title>
+        <script>
+            //<![CDATA[
+            function addOnclickToDatatableRows() {
+                var trs = document.getElementById('form:dataTable').getElementsByTagName('tbody')[0]
+                .getElementsByTagName('tr');
+                for (var i = 0; i < trs.length; i++) {
+                    trs[i].onmouseover = new Function("this.bgColor='#d0d0d0'");
+                    trs[i].onmouseout = new Function("this.bgColor='#ffffff'");
+                    trs[i].onclick = new Function("highlightAndSelectRow(this)");
+                }
+            }
+
+            function highlightAndSelectRow(tr) {
+                var trs = document.getElementById('form:dataTable').getElementsByTagName('tbody')[0]
+                .getElementsByTagName('tr');
+                for (var i = 0; i < trs.length; i++) {
+                    if (trs[i] == tr) {
+                        document.form.rowIndex.value = trs[i].rowIndex;
+                        document.getElementById('form:updateEdit').click();
+                    }                    
+                }
+            }
+
+            window.onload = addOnclickToDatatableRows;
+            //]]>
+        </script>
+    </head>
+    <body>
+        <div id="editrecord">
+            <fieldset style="border: 1px black solid">
+                <legend style="margin-left: 1em; padding: 0.2em 0.8em ">Add/Update/Delete Keyword</legend>
+                <h:form>       
+                    <h:panelGrid columns="3" width="100%" style="text-align: center">
+                        <h:outputText value="KeywordID" />
+                        <h:outputText value="Keyword" />
+                        <h:outputText value="UrlID" />
+
+                        <h:outputText value="#{keywordBean.dataItem.keywordID}" />
+                        <h:inputText id="name" value="#{keywordBean.dataItem.keyword}" />
+                        <h:inputText id="email" value="#{keywordBean.dataItem.urlID}" />
+                    </h:panelGrid>
+                    <h:inputHidden binding="#{keywordBean.dataItemId}" />
+                    <h:panelGrid columns="4" width="100%" style="text-align: center; 
+                                 border-top: 1px solid #000; margin-top: 10px; padding->top: 5px">
+                        <h:commandButton value="Update" action="#{keywordBean.updateDataItem}" />
+                        <h:commandButton value="Delete" action="#{keywordBean.deleteSelectedItems}" />
+                        <h:commandButton value="New" action="#{keywordBean.newDataItem}" />
+                        <h:commandButton value="Clear" action="#{keywordBean.clearDataItem()}"/>
+                    </h:panelGrid>
+                </h:form>
+            </fieldset>
+        </div>
+        <div id="contentbody" style="text-align: center;">
+            <h:form id="form">
+                <h:dataTable id="dataTable"
+                             styleClass="view-table"
+                             style="text-align: center"
+                             headerClass="view-table-header"
+                             rowClasses="view-table-odd-row,view-table-even-row"
+                             binding="#{keywordBean.dataTable}" 
+                             value="#{keywordBean.dataList}" 
+                             var="dataItem" rows="10">
+
+                    <h:column>
+                        <f:facet name="header">
+                            Keyword ID
+                        </f:facet>
+                        #{dataItem.keywordID}
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            Keyword
+                        </f:facet>
+                        #{dataItem.keyword}
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            Url ID
+                        </f:facet>
+                        #{dataItem.urlID}
+                    </h:column>
+
+                </h:dataTable>  
+                <input type="hidden" name="rowIndex" />
+                <h:commandLink id="updateEdit" type="hidden" 
+                               immediate="true" action="#{keywordBean.selectDataItem()}"/> 
+            </h:form>
+            <h:outputText value="Page #{keywordBean.getCurrentPage()}/#{keywordBean.getTotalPages()} "/>
+        </div>
+        <div id="navbtn">
+            <h:form>
+                <h:panelGrid columns="4" width="100%" style="text-align: center">
+                    <h:commandButton value="first" 
+                                     action="#{keywordBean.pageFirst}"
+                                     disabled="#{keywordBean.dataTable.first == 0}" />
+                    <h:commandButton value="prev" 
+                                     action="#{keywordBean.pagePrevious}"
+                                     disabled="#{keywordBean.dataTable.first == 0}" />
+                    <h:commandButton value="next" 
+                                     action="#{keywordBean.pageNext}"
+                                     disabled="#{keywordBean.dataTable.first + keywordBean.dataTable.rows
+                                                 >= keywordBean.dataTable.rowCount}" />
+                    <h:commandButton value="last" 
+                                     action="#{keywordBean.pageLast}"
+                                     disabled="#{keywordBean.dataTable.first + keywordBean.dataTable.rows
+                                                 >= keywordBean.dataTable.rowCount}" />
+                </h:panelGrid>
+            </h:form>
+        </div>
+    </body>
+</html>

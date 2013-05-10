@@ -50,24 +50,30 @@
                 </div>
             </div>
             <div id="editrecord">
-                <h:form>
-                    <h:panelGrid columns="3" width="100%">
-                        <h:outputText value="UserID" />
-                        <h:outputText value="User name" />
-                        <h:outputText value="User Email" />
+                <fieldset style="border: 1px black solid">
+                    <legend style="margin-left: 1em; padding: 0.2em 0.8em ">Add/Update/Delete User</legend>
+                    <h:form>
+                        <h:panelGrid columns="3" width="100%" style="text-align: center">
+                            <h:outputText value="UserID" />
+                            <h:outputText value="User name" />
+                            <h:outputText value="User Email" />
 
-                        <h:outputText value="#{mailListBean.dataItem.userID}" />
-                        <h:inputText id="name" value="#{mailListBean.dataItem.userName}" />
-                        <h:inputText id="email" value="#{mailListBean.dataItem.userEmail}" />
-                    </h:panelGrid>
-                    <h:inputHidden binding="#{mailListBean.dataItemId}" />
-                    <h:commandButton value="Update" action="#{mailListBean.updateDataItem}" />
-                    <h:commandButton value="Delete" action="#{mailListBean.deleteSelectedItems}" />
-                    <h:commandButton value="New" action="#{mailListBean.newDataItem}" />
-                    <h:commandButton value="Clear" action="#{mailListBean.clearDataItem()}"/>
-                </h:form>
+                            <h:outputText value="#{mailListBean.dataItem.userID}" />
+                            <h:inputText id="name" value="#{mailListBean.dataItem.userName}" />
+                            <h:inputText id="email" value="#{mailListBean.dataItem.userEmail}" />
+                        </h:panelGrid>
+                        <h:inputHidden binding="#{mailListBean.dataItemId}" />
+                        <h:panelGrid columns="4" width="100%" style="text-align: center; 
+                                     border-top: 1px solid #000; margin-top: 10px; padding-top: 5px">
+                            <h:commandButton value="Update" action="#{mailListBean.updateDataItem}" />
+                            <h:commandButton value="Delete" action="#{mailListBean.deleteSelectedItems}" />
+                            <h:commandButton value="New" action="#{mailListBean.newDataItem}" />
+                            <h:commandButton value="Clear" action="#{mailListBean.clearDataItem()}"/>
+                        </h:panelGrid>
+                    </h:form>
+                </fieldset>
             </div>
-            <div id="contentbody">
+            <div id="contentbody" style="text-align: center;">
                 <h:form id="form">
                     <h:dataTable id="dataTable"
                                  styleClass="view-table"
@@ -103,10 +109,11 @@
                     <h:commandLink id="updateEdit" type="hidden" 
                                    immediate="true" action="#{mailListBean.selectDataItem()}"/> 
                 </h:form>
+                <h:outputText value="Page #{mailListBean.getCurrentPage()}/#{mailListBean.getTotalPages()} "/>
             </div>
             <div id="navbtn">
                 <h:form>
-                    <h:panelGrid columns="4" width="100%">
+                    <h:panelGrid columns="4" width="100%" style="text-align: center">
                         <h:commandButton value="first" 
                                          action="#{mailListBean.pageFirst}"
                                          disabled="#{mailListBean.dataTable.first == 0}" />
