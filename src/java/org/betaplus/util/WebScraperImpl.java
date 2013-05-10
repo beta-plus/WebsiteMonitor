@@ -267,7 +267,7 @@ public class WebScraperImpl implements WebScraper {
             }
             boolean addFile = true;
             if (getFile) {
-                String nm = "";//absUrl.replace("http://www.lga.org.mt/common/file_provider.aspx?id=", "");
+                String nm = absUrl.replace(ws.getSource(), "");
                 Pdf f = downloadFile(new URL(absUrl), "data", "document_" + nm, ws);
                 if (f != null) {
                     for (Pdf fil : lf) {
