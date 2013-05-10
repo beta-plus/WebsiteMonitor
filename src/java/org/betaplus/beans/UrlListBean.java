@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.betaplus.beans;
 
 import java.io.Serializable;
@@ -11,7 +7,6 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.component.html.HtmlInputHidden;
@@ -21,7 +16,7 @@ import org.betaplus.testcases.SimpleDataSource;
 
 /**
  *
- * @author Ben
+ * @author BenjaminAdamTaylor
  */
 @ManagedBean
 @SessionScoped
