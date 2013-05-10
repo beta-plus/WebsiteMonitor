@@ -19,8 +19,8 @@ import org.betaplus.testcases.SimpleDataSource;
  */
 public class DataRetrieverImpl implements DataRetriever {
 
-    Connection conn;
-    Statement stat;
+    private Connection conn;
+    private Statement stat;
 
     /**
      *

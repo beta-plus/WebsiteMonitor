@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author StephenJohnRussell
+ * 
  */
 public class DataDumperTest {
     
@@ -59,7 +60,7 @@ public class DataDumperTest {
     /**
      * Test of dumpRSS method, of class DataDumper.
      */
-    @Test
+    @Test   
     public void testDumpRSS() {
         System.out.println("dumpRSS");
         RssFeed rss = new RssFeed("", "", "", "", "", "", new WebSource("http://www.lga.org.mt/lga/content", "", "", 2));

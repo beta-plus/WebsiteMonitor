@@ -4,10 +4,7 @@
  */
 package org.betaplus.util;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import org.betaplus.datatypes.Pdf;
 import org.betaplus.datatypes.RssFeed;
 import org.betaplus.datatypes.WebSource;

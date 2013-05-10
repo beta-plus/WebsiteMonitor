@@ -139,7 +139,7 @@ public class WebScraperTest {
         keyWords.add("file_provider");
         WebScraper instance = new WebScraperImpl();        
         ArrayList<Pdf> result = instance.getPDFsFromUrl(url, dataSource, keyWords);
-        File expResult = new File("data/document_.pdf");
+        File expResult = new File("data/t04-pdf01.pdf.pdf");
         assertEquals(expResult, result.get(0).getPdfFile());        
     }
 
@@ -156,7 +156,7 @@ public class WebScraperTest {
         keyWords.add("file_provider");
         WebScraper instance = new WebScraperImpl();        
         ArrayList<Pdf> result = instance.getPDFsFromUrl(url, dataSource, keyWords);
-        File expResult = new File("data/document_.pdf");
+        File expResult = new File("data/t09-pdf01.pdf.pdf");
         assertEquals(expResult, result.get(0).getPdfFile());        
     }
 }
