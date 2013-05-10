@@ -4,6 +4,7 @@
  */
 package org.betaplus.beans;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.component.html.HtmlInputHidden;
 import javax.faces.context.FacesContext;
@@ -22,8 +24,8 @@ import org.betaplus.testcases.SimpleDataSource;
  * @author Ben
  */
 @ManagedBean
-@RequestScoped
-public class UrlListBean {
+@SessionScoped
+public class UrlListBean implements Serializable{
     private Connection conn;
     private Statement stat;
     private HtmlDataTable dataTable;
