@@ -52,7 +52,7 @@ public class DataDumperImpl implements DataDumper {
                 + "========================================================\n");
 
         DataDumper dd = new DataDumperImpl();
-        String[] urls = {"http://www.gov.im/gambling/regulatory.xml", "http://regulations.porezna-uprava.hr/PrikaziPropis.asp?file=agc.XML&ime=Act%20on%20Games%20of%20Chance&idAktualni=1098", "http://www.lga.org.mt/lga/content.aspx?id=92272", };
+        String[] urls = {"http://www.gov.im/gambling/regulatory.xml", "http://regulations.porezna-uprava.hr/PrikaziPropis.asp?file=agc.XML&ime=Act%20on%20Games%20of%20Chance&idAktualni=1098", "http://www.lga.org.mt/lga/content.aspx?id=92272"};
         String[] sources = {"http://www.gov.im/gambling/", "http://regulations.porezna-uprava.hr/", "http://www.lga.org.mt/lga/content"};
         String[] rssSource = {"www.gov.im/rssnews.gov", "test.xml", "test.xml"};
         for (int i = 0; i < urls.length; i++) {

@@ -179,8 +179,8 @@ public class WebScraperImpl implements WebScraper {
      * @return
      */
     private ArrayList<String> getLinks(Document doc, String dataSource, ArrayList<String> lf, ArrayList<String> frameList, int depth) {
-        if (depth < 400) {
-            depth++;
+        if (lf.size() < 400) {
+            
             Elements els;
             try {
                 //parse links from body of page
@@ -255,16 +255,14 @@ public class WebScraperImpl implements WebScraper {
             //The String rep of a link found
             String absUrl = e.absUrl("href");
             //Check each keyword for presence in link
-            String kw = "";
             for (String s : keyWords) {
                 if (absUrl.contains(s)) {
                     if (!visited.contains(absUrl)) {
                         visited.add(absUrl);
                         int index = absUrl.lastIndexOf("/");
                         String fileName = absUrl.substring(index + 1);
-                        File f = downloadFile(new URL(absUrl), "data", fileName, ws);
-                        String h = getHash(f);
-                        lf.add(new Pdf(h, f.getName(), absUrl, f, ws));
+                        File f = downloadFile(new URL(absUrl), "data", fileName, ws);                        
+                        lf.add(new Pdf(getHash(f), f.getName(), absUrl, f, ws));
                         System.out.println(fileName);
                         System.out.println(absUrl);
                         break;
@@ -307,7 +305,7 @@ public class WebScraperImpl implements WebScraper {
      * @param name
      * @return
      */
-    public static File downloadFile(URL url, String directory, String name, WebSource ws) throws IOException {
+    public static File downloadFile(URL url, String directory, String name, WebSource ws) {
         try {
 
             //Get a connection to the URL and start up a buffered reader.
@@ -326,7 +324,7 @@ public class WebScraperImpl implements WebScraper {
             return new File(directory + "/" + name + ".pdf");
         } catch (IOException ex) {
             System.out.println(ex);
-            throw ex;
+            return null;
         }
     }
 
@@ -371,6 +369,8 @@ public class WebScraperImpl implements WebScraper {
         } finally {
             try {
                 is.close();
+            } catch (NullPointerException ex) {
+                Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);            
             } catch (IOException ex) {
                 Logger.getLogger(WebsiteMonitor.class.getName()).log(Level.SEVERE, null, ex);
             }
