@@ -48,7 +48,7 @@
                         <h:inputText id="name" value="#{keywordBean.dataItem.keyword}" />
                         <h:inputText id="email" value="#{keywordBean.dataItem.urlID}" />
                     </h:panelGrid>
-                    <h:inputHidden binding="#{urlListBean.dataItemId}" />
+                    <h:inputHidden binding="#{keywordBean.dataItemId}" />
                     <h:panelGrid columns="4" width="100%" style="text-align: center; 
                                  border-top: 1px solid #000; margin-top: 10px; padding-top: 5px">
                         <h:commandButton value="Update" action="#{keywordBean.updateDataItem}" />

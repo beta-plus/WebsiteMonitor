@@ -78,7 +78,7 @@ public class KeywordBean {
     public void updateDataItem() throws Exception {
         getConnection();
         // Retain the ID of the data item from hidden input element.
-        dataItem.setUrlID(dataItemId.getValue().toString());
+        dataItem.setKeywordID(dataItemId.getValue().toString());
         // Update the record with the corresponding keyword ID
         stat.execute("UPDATE keywords SET"
                 + " Key_Word='" + dataItem.getKeyword() + "',"
@@ -95,7 +95,7 @@ public class KeywordBean {
     public void newDataItem() throws Exception {
         getConnection();
         // Create a new record using the values given by the user
-        stat.execute("INSERT INTO keywords (Key_Word_Id, Url_Id) "
+        stat.execute("INSERT INTO keywords (Key_Word, Url_Id) "
                 + "VALUES ('" + dataItem.getKeyword() + "', '"
                 + dataItem.getUrlID() + "')");
         // Clear the data stored in the current data object
@@ -109,7 +109,7 @@ public class KeywordBean {
     public void deleteSelectedItems() throws Exception {
         getConnection();
 
-        dataItem.setUrlID(dataItemId.getValue().toString());
+        dataItem.setKeywordID(dataItemId.getValue().toString());
 
         stat.execute("DELETE FROM keywords WHERE Key_Word_Id='"
                 + dataItem.getKeywordID() + "'");
